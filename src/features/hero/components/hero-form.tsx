@@ -108,10 +108,11 @@ export function HeroForm() {
               <Input
                 {...register("heading")}
                 placeholder="Enter hero headline..."
+                aria-invalid={Boolean(errors.heading)}
                 className="bg-background text-sm font-bold"
               />
               {errors.heading && (
-                <p className="text-xs text-destructive">
+                <p className="text-xs text-destructive font-medium">
                   {errors.heading.message}
                 </p>
               )}
@@ -126,6 +127,7 @@ export function HeroForm() {
                 {...register("subheading")}
                 rows={3}
                 placeholder="Enter detailed hero description..."
+                aria-invalid={Boolean(errors.subheading)}
                 className="bg-background text-sm"
               />
               {errors.subheading && (

@@ -88,10 +88,11 @@ export function SeoForm() {
           <Input
             {...register("metaTitle")}
             placeholder="e.g. QuietChat - Anonymous 1-on-1 Live Chat"
-            className="bg-background text-xs h-10 rounded-md border-border"
+            aria-invalid={Boolean(errors.metaTitle)}
+            className="bg-background text-xs h-10 rounded-md"
           />
           {errors.metaTitle && (
-            <p className="text-xs text-destructive">
+            <p className="text-xs text-destructive font-medium">
               {errors.metaTitle.message}
             </p>
           )}
@@ -105,11 +106,12 @@ export function SeoForm() {
           <Textarea
             {...register("metaDescription")}
             placeholder="Provide a compelling 150-character summary for Google search results..."
+            aria-invalid={Boolean(errors.metaDescription)}
             rows={3}
-            className="bg-background text-xs rounded-md border-border"
+            className="bg-background text-xs rounded-md"
           />
           {errors.metaDescription && (
-            <p className="text-xs text-destructive">
+            <p className="text-xs text-destructive font-medium">
               {errors.metaDescription.message}
             </p>
           )}

@@ -19,9 +19,9 @@ export const blogPostSchema = z.object({
     .optional(),
   content: z.string().min(10, "Content must be at least 10 characters long"),
   status: z.enum(["Published", "Draft", "Archived"]).optional(),
-  imageUrl: z.string().optional(),
+  imageUrl: z.string().min(1, "Featured header image is required"),
   authorProfileUrl: z.string().optional(),
-  author: z.string().optional(),
+  author: z.string().min(1, "Author name is required"),
   doctorId: z.string().optional(),
   tag: z.string().optional(),
   engagement: z

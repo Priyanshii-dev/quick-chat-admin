@@ -19,6 +19,7 @@ export interface CKEditorFieldProps {
   onChange: (value: string) => void;
   placeholder?: string;
   minHeight?: number;
+  error?: boolean;
 }
 
 export function CKEditorField({
@@ -26,10 +27,11 @@ export function CKEditorField({
   onChange,
   placeholder = "Write your blog content here...",
   minHeight = 310,
+  error = false,
 }: CKEditorFieldProps) {
   return (
     <div
-      className="ck-editor-field"
+      className={`ck-editor-field ${error ? "is-invalid" : ""}`}
       style={
         { "--ck-editor-min-height": `${minHeight}px` } as React.CSSProperties
       }
