@@ -1,123 +1,126 @@
 "use client";
 
-import { Download } from "lucide-react";
-import { useMemo, useState } from "react";
-import { Sidebar } from "@/components/layout/sidebar";
-import { ModuleHeader } from "@/components/shared/module-header";
-import { CommonTableFilters } from "@/components/shared/table/common-table-filters";
-import { GlobalTable } from "@/components/shared/table/global-table";
-import type { TableColumn } from "@/components/shared/table/types/types";
+import React, { useMemo, useState } from "react";
+import { ShieldCheck } from "lucide-react";
+import { GlobalTable, TableColumn } from "@/components/table/global-table";
 import { useLoginHistory } from "../hook/login-history.hook";
 import type { LoginEvent } from "../types/types";
 
 export function LoginHistoryPage() {
   const { data, isLoading } = useLoginHistory();
   const [query, setQuery] = useState("");
-  const [type, setType] = useState("all");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [selectedType, setSelectedType] = useState("");
+
   const rows: LoginEvent[] = data?.items ?? [];
+
   const filteredRows = useMemo(
     () =>
       rows.filter((event) => {
-        const matchesName = event.user
-          .toLowerCase()
-          .includes(query.toLowerCase());
-        return matchesName && (type === "all" || event.type === type);
+        const matchesName =
+          !query ||
+          event.user.toLowerCase().includes(query.toLowerCase()) ||
+          (event.email &&
+            event.email.toLowerCase().includes(query.toLowerCase()));
+        const matchesType = !selectedType || event.type === selectedType;
+        return matchesName && matchesType;
       }),
-    [rows, query, type],
+    [rows, query, selectedType],
   );
-  const total = filteredRows.length;
+
   const columns: TableColumn<LoginEvent>[] = [
     {
       id: "srNo",
       header: "S.No.",
-      cell: (_event, index) => <span className="font-medium">{index + 1}</span>,
+      cell: (_event, index) => (
+        <span className="font-semibold text-foreground">{index + 1}</span>
+      ),
     },
     {
       id: "user",
       header: "User",
-      cell: (event) => <span className="whitespace-nowrap">{event.user}</span>,
+      cell: (event) => (
+        <span className="font-extrabold text-foreground">{event.user}</span>
+      ),
     },
     {
       id: "email",
       header: "Email",
       cell: (event) => (
-        <span className="whitespace-nowrap">{event.email ?? "-"}</span>
+        <span className="font-mono text-muted-foreground">
+          {event.email ?? "—"}
+        </span>
       ),
     },
     {
       id: "type",
-      header: "Type",
+      header: "Device Type",
       cell: (event) => (
-        <span className="lowercase">{event.type ?? "desktop"}</span>
+        <span className="capitalize rounded-full bg-secondary px-2.5 py-0.5 text-xs font-bold text-foreground">
+          {event.type ?? "desktop"}
+        </span>
       ),
     },
-    { id: "ip", header: "IP", cell: (event) => <span>{event.ip ?? "-"}</span> },
+    {
+      id: "ip",
+      header: "IP Address",
+      cell: (event) => (
+        <span className="font-mono text-xs">{event.ip ?? "—"}</span>
+      ),
+    },
     {
       id: "location",
       header: "Location",
-      cell: (event) => <span>{event.location ?? "-"}</span>,
+      cell: (event) => (
+        <span className="text-foreground">{event.location ?? "—"}</span>
+      ),
     },
     {
       id: "device",
-      header: "Device",
-      cell: (event) => <span>{event.device}</span>,
+      header: "Device Info",
+      cell: (event) => (
+        <span className="text-muted-foreground">{event.device}</span>
+      ),
     },
     {
       id: "createdAt",
       header: "Date & Time",
       cell: (event) => (
-        <span className="whitespace-nowrap">{event.createdAt}</span>
+        <span className="whitespace-nowrap font-medium text-muted-foreground">
+          {event.createdAt}
+        </span>
       ),
     },
   ];
 
+  const typeOptions = [
+    { label: "Desktop", value: "desktop" },
+    { label: "Mobile", value: "mobile" },
+    { label: "Tablet", value: "tablet" },
+  ];
+
   return (
-    <div className="grid min-h-screen grid-cols-[248px_minmax(0,1fr)] max-[680px]:block">
-      <Sidebar alwaysOpen />
-      <main className="min-w-0 px-[42px] pt-7 pb-12 max-[1000px]:p-6 max-[680px]:px-4 max-[680px]:pt-5">
-        <ModuleHeader eyebrow="Security" title="Login History" />
-        <div className="mb-4 flex items-center justify-between gap-4 max-[680px]:flex-col">
-          <CommonTableFilters
-            search
-            searchValue={query}
-            onSearchChange={(value) => {
-              setQuery(value);
-              setPage(1);
-            }}
-            select
-            selectValue={type === "all" ? "" : type}
-            selectOptions={[
-              { label: "Desktop", value: "desktop" },
-              { label: "Mobile", value: "mobile" },
-              { label: "Tablet", value: "tablet" },
-            ]}
-            onSelectChange={(value) => {
-              setType(value || "all");
-              setPage(1);
-            }}
-            selectLabel="Type"
-            includeAllOption={false}
-            className="flex-1"
-          />
-        </div>
-        <section className="rounded-lg">
-          <GlobalTable
-            data={filteredRows}
-            columns={columns}
-            totalCount={total}
-            currentPage={page}
-            pageSize={pageSize}
-            onPageChange={setPage}
-            onPageSizeChange={(size) => {
-              setPageSize(size);
-              setPage(1);
-            }}
-            loading={isLoading}
-          />
-        </section>
-      </main>
+    <div className="w-full">
+      <GlobalTable
+        icon={<ShieldCheck className="h-5 w-5" />}
+        title="Login History"
+        description="Review recent administrator account access, IP addresses, and security audit logs."
+        breadcrumbs={[
+          { label: "Settings", href: "/settings" },
+          { label: "Login History" },
+        ]}
+        showSearch={true}
+        searchQuery={query}
+        onSearchChange={setQuery}
+        searchPlaceholder="Search by user or email..."
+        showStatusFilter={true}
+        statusValue={selectedType}
+        onStatusChange={setSelectedType}
+        statusOptions={typeOptions}
+        columns={columns}
+        data={filteredRows}
+        loading={isLoading}
+        emptyMessage="No login audit events recorded."
+      />
     </div>
   );
 }

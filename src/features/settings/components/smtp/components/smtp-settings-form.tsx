@@ -1,20 +1,17 @@
 "use client";
 
-import { Edit3, Eye, Mail, Send, Settings } from "lucide-react";
+import React from "react";
+import { Edit3, Mail, Send, Settings, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { AppButton } from "@/components/shared/app-button";
+import { Button } from "@/components/ui/button";
 import { FormInput } from "@/components/shared/custom-input-text";
 import { ModuleHeader } from "@/components/shared/module-header";
-import { FormModeActions, type FormMode } from "@/components/shared/form-mode";
-import { RequiredAsterisk } from "@/components/shared/required-assert-risk";
 import { useSmtpSettingsForm } from "../hook/use-smtp-settings-form";
+import { FormMode } from "@/components/shared/form-mode";
 
 type SmtpSettingsFormProps = { mode?: FormMode; onDelete?: () => void };
 
-export function SmtpSettingsForm({
-  mode = "edit",
-  onDelete,
-}: SmtpSettingsFormProps) {
+export function SmtpSettingsForm({ mode = "edit" }: SmtpSettingsFormProps) {
   const router = useRouter();
   const {
     control,
@@ -26,35 +23,43 @@ export function SmtpSettingsForm({
   } = useSmtpSettingsForm(mode);
 
   return (
-    <>
-      <ModuleHeader eyebrow="Email" title="SMTP Settings">
-        <div className="flex items-center gap-2">
-          {isReadOnly ? (
-            <AppButton
-              variant="primary"
-              type="button"
-              onClick={() => router.push("/settings/smtp-settings")}
-            >
-              <Edit3 size={15} /> Edit
-            </AppButton>
-          ) : null}
-        </div>
+    <div className="w-full space-y-6">
+      <ModuleHeader
+        eyebrow="Email Configuration"
+        title="SMTP Settings"
+        description="Configure your outgoing email delivery server, port, credentials, and test delivery."
+      >
+        {isReadOnly && (
+          <Button
+            variant="outline"
+            type="button"
+            onClick={() => router.push("/settings/smtp-settings")}
+            className="gap-2 border-border text-xs font-semibold"
+          >
+            <Edit3 size={15} /> Edit Settings
+          </Button>
+        )}
       </ModuleHeader>
 
-      <form noValidate className="grid gap-[18px]" onSubmit={handleSave}>
-        <fieldset
-          disabled={isReadOnly}
-          className="grid gap-[18px] border-0 p-0"
-        >
-          <section className="rounded-lg border border-line bg-panel p-[22px] shadow-panel [&_h2]:mb-6 [&_h2]:flex [&_h2]:items-center [&_h2]:gap-2 [&_h2]:text-sm [&_h2]:font-bold">
-            <h2>
-              <Settings size={18} /> SMTP Configuration
-            </h2>
-            <div className="grid grid-cols-4 items-end gap-x-[22px] gap-y-[18px] max-[1000px]:grid-cols-2 max-[680px]:grid-cols-1">
+      <form noValidate onSubmit={handleSave} className="space-y-6">
+        <fieldset disabled={isReadOnly} className="space-y-6 border-0 p-0">
+          {/* SMTP Configuration Card */}
+          <section className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
+            <div className="flex items-center gap-2.5 border-b border-border/60 pb-3.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Settings className="h-5 w-5" />
+              </div>
+              <h2 className="text-lg font-extrabold text-foreground tracking-tight">
+                SMTP Server Configuration
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               <FormInput
                 name="host"
                 label="SMTP Host"
                 control={control}
+                placeholder="e.g. smtp.gmail.com"
                 required
               />
               <FormInput
@@ -62,12 +67,14 @@ export function SmtpSettingsForm({
                 label="SMTP Port"
                 control={control}
                 type="number"
+                placeholder="587"
                 required
               />
               <FormInput
                 name="username"
                 label="SMTP Username"
                 control={control}
+                placeholder="user@example.com"
                 required
               />
               <FormInput
@@ -75,110 +82,134 @@ export function SmtpSettingsForm({
                 label="SMTP Password"
                 control={control}
                 type="password"
+                placeholder="••••••••••••"
               />
-              <label className="grid">
-                <span className="text-sm leading-6 text-muted">
-                  Encryption
-                  <RequiredAsterisk />
-                </span>
+
+              {/* Encryption Select Field */}
+              <div className="grid gap-1.5 self-start">
+                <label className="text-xs font-bold text-foreground">
+                  ENCRYPTION <span className="text-destructive">*</span>
+                </label>
                 <select
-                  className="mt-2 block w-full rounded-md border border-line bg-[#fbfcfc] p-3 text-sm text-ink outline-none focus:border-teal focus:ring-3 focus:ring-teal-soft"
                   {...register("encryption")}
+                  className="h-10 w-full rounded-md border border-border bg-background px-3 text-xs font-semibold text-foreground focus:outline-none focus:border-primary"
                 >
                   <option value="SSL">SSL</option>
                   <option value="TLS">TLS</option>
                   <option value="None">None</option>
                 </select>
-              </label>
+              </div>
+
               <FormInput
                 name="fromEmail"
                 label="From Email"
                 control={control}
+                placeholder="noreply@domain.com"
                 required
               />
               <FormInput
                 name="fromName"
                 label="From Name"
                 control={control}
+                placeholder="QuietChat Admin"
                 required
               />
               <FormInput
                 name="fromCc"
                 label="From CC"
                 control={control}
-                placeholder="From CC"
+                placeholder="cc@domain.com"
               />
               <FormInput
                 name="fromBcc"
                 label="From BCC"
                 control={control}
-                placeholder="From BCC"
+                placeholder="bcc@domain.com"
               />
-              <label className="grid gap-2">
-                <span className="flex items-center gap-2 text-[13px] [&>input]:h-[14px] [&>input]:w-[22px] [&>input]:accent-teal">
-                  <span>No</span>
-                  <input type="checkbox" {...register("enabled")} />
-                  <span>Yes</span>
-                </span>
-                <span className="text-sm leading-6 text-muted">
-                  Enable to start using SMTP for sending emails
-                </span>
-              </label>
+
+              {/* Enable Switch Box */}
+              <div className="sm:col-span-2 lg:col-span-4 flex items-center gap-3 pt-2">
+                <input
+                  type="checkbox"
+                  id="smtp-enabled"
+                  {...register("enabled")}
+                  className="h-4 w-4 rounded border-border accent-primary cursor-pointer"
+                />
+                <label
+                  htmlFor="smtp-enabled"
+                  className="text-xs font-bold text-foreground cursor-pointer select-none"
+                >
+                  Enable SMTP for sending all outgoing email notifications
+                </label>
+              </div>
             </div>
           </section>
 
-          <section className="grid grid-cols-[215px_minmax(0,1fr)] gap-[18px] rounded-lg border border-line bg-panel p-[22px] shadow-panel max-[1000px]:grid-cols-1 [&_h2]:flex [&_h2]:items-center [&_h2]:gap-2 [&_h2]:text-sm [&_h2]:font-bold">
-            <div className="grid content-start gap-[18px] rounded-[7px] border border-line p-4">
-              <h2>
-                <Mail size={18} /> Test Email
-              </h2>
+          {/* Test Email Section */}
+          <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 rounded-xl border border-border bg-card p-6 shadow-sm">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 border-b border-border/60 pb-3">
+                <Mail className="h-5 w-5 text-primary" />
+                <h3 className="text-base font-extrabold text-foreground">
+                  Send Test Email
+                </h3>
+              </div>
+
               <FormInput
                 name="testEmail"
-                label="Test Email Address"
+                label="Test Recipient Email"
                 control={control}
                 type="email"
                 placeholder="test@example.com"
               />
               <FormInput
                 name="content"
-                label="Content"
+                label="Sample Content"
                 control={control}
                 textarea
-                rows={6}
-                placeholder="Enter email content"
+                rows={4}
+                placeholder="Enter test message content..."
               />
-              <AppButton
-                variant="primary"
+              <Button
                 type="button"
                 onClick={handleSendTestEmail}
                 disabled={isSendingTest}
+                className="w-full gap-2 bg-primary text-primary-foreground font-bold h-10 hover:opacity-90 shadow-sm"
               >
-                <Send size={15} />{" "}
-                {isSendingTest ? "Sending..." : "Send Test Email"}
-              </AppButton>
+                <Send className="h-4 w-4" />
+                {isSendingTest ? "Sending Test Email..." : "Send Test Email"}
+              </Button>
             </div>
-            <div className="rounded-[7px] border border-line p-4">
-              <h2>
-                <Eye size={18} /> Email Previews
-              </h2>
-              <div className="grid min-h-[240px] grid-cols-3 gap-5 pt-3 text-xs text-muted max-[680px]:min-h-0 max-[680px]:grid-cols-1 max-[680px]:gap-4">
-                <span>Send a test email to see the preview</span>
-                <span>Send a test email to see the preview</span>
-                <span>Send a test email to see the preview</span>
+
+            <div className="lg:col-span-2 space-y-4">
+              <div className="flex items-center gap-2 border-b border-border/60 pb-3">
+                <Eye className="h-5 w-5 text-primary" />
+                <h3 className="text-base font-extrabold text-foreground">
+                  Email Preview
+                </h3>
+              </div>
+              <div className="flex min-h-[220px] items-center justify-center rounded-xl border border-border/60 bg-muted/20 p-6 text-center text-xs text-muted-foreground">
+                <p>
+                  Click &quot;Send Test Email&quot; to verify your SMTP
+                  configuration.
+                </p>
               </div>
             </div>
           </section>
         </fieldset>
 
-        <div className="flex justify-end">
-          <FormModeActions
-            mode={mode}
-            onDelete={onDelete}
-            saveLabel="Save Settings"
-            className="min-w-[180px]"
-          />
-        </div>
+        {/* Action Button */}
+        {!isReadOnly && (
+          <div className="flex justify-end pt-2">
+            <Button
+              type="submit"
+              className="gap-2 bg-primary text-primary-foreground font-bold h-10 px-8 hover:opacity-90 shadow-md"
+            >
+              Save SMTP Configuration
+            </Button>
+          </div>
+        )}
       </form>
-    </>
+    </div>
   );
 }

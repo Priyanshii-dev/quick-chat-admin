@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { Save, Trash2 } from "lucide-react";
 import { AppButton } from "@/components/shared/app-button";
+import { ConfirmationDialog } from "@/components/shared/confirmation-dialog";
 
 export type FormMode = "edit" | "view" | "delete";
 
@@ -26,18 +28,30 @@ export function FormModeActions({
   isSubmitting = false,
   isDisabled = false,
 }: FormModeActionsProps) {
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+
   if (mode === "view") return null;
 
   if (mode === "delete") {
     return (
-      <AppButton
-        variant="destructive"
-        type="button"
-        onClick={onDelete}
-        className={className}
-      >
-        <Trash2 size={16} /> Delete
-      </AppButton>
+      <>
+        <AppButton
+          variant="destructive"
+          type="button"
+          onClick={() => setDeleteConfirmationOpen(true)}
+          className={className}
+        >
+          <Trash2 size={16} /> Delete
+        </AppButton>
+        <ConfirmationDialog
+          open={deleteConfirmationOpen}
+          onOpenChange={setDeleteConfirmationOpen}
+          onConfirm={() => {
+            setDeleteConfirmationOpen(false);
+            onDelete?.();
+          }}
+        />
+      </>
     );
   }
 

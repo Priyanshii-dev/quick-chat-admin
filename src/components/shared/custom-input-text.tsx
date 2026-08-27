@@ -44,7 +44,10 @@ export const CustomInputText = forwardRef<
   return (
     <Input
       ref={ref}
-      className={cn("min-h-10 bg-[#fbfcfc] px-3 text-sm", className)}
+      className={cn(
+        "h-10 bg-background border-border px-3 text-xs rounded-md",
+        className,
+      )}
       {...props}
     />
   );
@@ -57,7 +60,10 @@ export const CustomTextareaInput = forwardRef<
   return (
     <Textarea
       ref={ref}
-      className={cn("min-h-24 bg-[#fbfcfc] px-3 text-sm", className)}
+      className={cn(
+        "min-h-20 bg-background border-border px-3 text-xs rounded-md",
+        className,
+      )}
       {...props}
     />
   );
@@ -106,7 +112,11 @@ export function FormInput<TFieldValues extends FieldValues>({
                 aria-describedby={
                   fieldState.error ? `${fieldId}-error` : undefined
                 }
-                className={className}
+                className={cn(
+                  fieldState.error &&
+                    "border-destructive focus-visible:ring-destructive",
+                  className,
+                )}
               />
             </div>
           ) : (
@@ -122,7 +132,11 @@ export function FormInput<TFieldValues extends FieldValues>({
                 aria-describedby={
                   fieldState.error ? `${fieldId}-error` : undefined
                 }
-                className={className}
+                className={cn(
+                  fieldState.error &&
+                    "border-destructive focus-visible:ring-destructive",
+                  className,
+                )}
               />
             </div>
           )}

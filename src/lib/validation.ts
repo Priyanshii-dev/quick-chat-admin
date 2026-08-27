@@ -30,8 +30,7 @@ export const optionalString = (label: string) =>
     .trim()
     .refine((value) => value === "" || value.length > 0, {
       message: `${label} is required`,
-    })
-    ;
+    });
 export const requiredSelection = (label: string) =>
   z
     .string({
@@ -62,8 +61,7 @@ export const optionalEmail = () =>
     .max(254, "Email must not exceed 254 characters")
     .refine((value) => value === "" || emailRegex.test(value), {
       message: "Invalid email address",
-    })
-    ;
+    });
 
 export const requiredPhone10 = (label = "Phone number") =>
   requiredString(label).regex(phone10Regex, "Invalid phone number");
@@ -170,8 +168,7 @@ export const optionalUrl = () =>
       {
         message: "URL must start with http:// or https://",
       },
-    )
-    ;
+    );
 
 export const requiredUrl = (label = "URL") =>
   requiredString(label).refine(

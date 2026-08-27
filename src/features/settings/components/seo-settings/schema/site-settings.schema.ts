@@ -2,7 +2,10 @@ import { z } from "zod";
 import { optionalString, requiredString, requiredUrl } from "@/lib/validation";
 
 export const siteSettingsSchema = z.object({
-  siteName: requiredString("Site name").min(2, "Site name must be at least 2 characters"),
+  siteName: requiredString("Site name").min(
+    2,
+    "Site name must be at least 2 characters",
+  ),
   siteUrl: requiredUrl("Site URL"),
   defaultTitle: requiredString("SEO title")
     .min(10, "SEO title must be at least 10 characters")

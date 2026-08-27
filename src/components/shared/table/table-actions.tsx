@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { Eye, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { Share2 } from "lucide-react";
+import { ConfirmationDialog } from "@/components/shared/confirmation-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +24,7 @@ export function TableActions({
   onDelete,
   onShare,
 }: TableActionsProps) {
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const hasMoreActions = onEdit || onView || onDelete || onShare;
 
   return (
@@ -59,7 +62,7 @@ export function TableActions({
               <DropdownMenuItem
                 className="cursor-pointer"
                 variant="destructive"
-                onClick={onDelete}
+                onClick={() => setDeleteConfirmationOpen(true)}
               >
                 <Trash2 size={15} /> Delete
               </DropdownMenuItem>
@@ -67,6 +70,14 @@ export function TableActions({
           </DropdownMenuContent>
         </DropdownMenu>
       ) : null}
+      <ConfirmationDialog
+        open={deleteConfirmationOpen}
+        onOpenChange={setDeleteConfirmationOpen}
+        onConfirm={() => {
+          setDeleteConfirmationOpen(false);
+          onDelete?.();
+        }}
+      />
     </div>
   );
 }

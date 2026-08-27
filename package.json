@@ -9,14 +9,17 @@
     "start": "next start",
     "lint": "eslint .",
     "format": "prettier --write .",
+    "test": "echo \"No tests specified\" && exit 0",
     "prepare": "husky"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
+    "@ckeditor/ckeditor5-react": "^11.2.0",
     "@hookform/resolvers": "^5.2.1",
     "@tanstack/react-query": "^5.62.0",
     "@tanstack/react-table": "^9.1.2",
     "axios": "^1.7.9",
+    "ckeditor5": "^48.4.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "http-proxy": "^1.18.1",
