@@ -1,20 +1,10 @@
 "use client";
 
-import {
-  Code2,
-  Download,
-  Laptop,
-  Mail,
-  Plus,
-  Send,
-  Smartphone,
-} from "lucide-react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
-import { Sidebar } from "@/components/layout/sidebar";
+import { Mail, Plus, Laptop, Smartphone, Code2, Send } from "lucide-react";
+import { GlobalTable, TableColumn } from "@/components/table/global-table";
 import { ConfirmationDialog } from "@/components/shared/confirmation-dialog";
-import { ModuleHeader } from "@/components/shared/module-header";
-import { CommonTableFilters } from "@/components/shared/table/common-table-filters";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,7 +14,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { GlobalTable } from "@/components/shared/table/global-table";
 import { useEmailTemplates } from "../hook/email-templates.hook";
 import type { EmailTemplate } from "../types/types";
 import { getEmailTemplateColumns } from "./columns";
@@ -34,8 +23,8 @@ const staticEmailTemplates: EmailTemplate[] = [
   {
     id: "welcome-subscriber",
     name: "Welcome subscriber",
-    from: "hello@northstar.example",
-    subject: "Welcome to Northstar",
+    from: "hello@quietchat.in",
+    subject: "Welcome to QuietChat Admin",
     createdAt: "2026-08-20T09:00:00.000Z",
     updatedAt: "2026-08-20T09:00:00.000Z",
     status: "Active",
@@ -46,9 +35,7 @@ export function EmailTemplatesPage() {
   const router = useRouter();
   const { data, isLoading } = useEmailTemplates();
   const [query, setQuery] = useState("");
-  const [status, setStatus] = useState("all");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [deletedIds, setDeletedIds] = useState<string[]>([]);
   const [editedTemplates, setEditedTemplates] = useState<
     Record<string, EmailTemplate>
@@ -56,17 +43,19 @@ export function EmailTemplatesPage() {
   const [selectedTemplate, setSelectedTemplate] =
     useState<EmailTemplate | null>(null);
   const [content, setContent] = useState(
-    "Write your email content...\nGhdgh fdjvj hnhgn",
+    "Write your email template content here...",
   );
   const [previewMode, setPreviewMode] = useState<"desktop" | "mobile" | "html">(
     "desktop",
   );
   const [dialogMode, setDialogMode] = useState<"view" | "edit" | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<EmailTemplate | null>(null);
+
   const baseRows = data?.items?.length ? data.items : staticEmailTemplates;
   const rows = baseRows
     .filter((template) => !deletedIds.includes(template.id))
     .map((template) => editedTemplates[template.id] ?? template);
+
   const filteredRows = useMemo(() => {
     const normalizedQuery = query.toLowerCase();
     return rows.filter((template) => {
@@ -76,123 +65,99 @@ export function EmailTemplatesPage() {
         .includes(normalizedQuery);
       return (
         matchesQuery &&
-        (status === "all" || template.status.toLowerCase() === status)
+        (!selectedStatus || template.status.toLowerCase() === selectedStatus.toLowerCase())
       );
     });
-  }, [query, rows, status]);
+  }, [query, rows, selectedStatus]);
 
-  const columns = getEmailTemplateColumns({
-    onView: (template) => {
-      setSelectedTemplate(template);
-      setContent("Write your email content...\nGhdgh fdjvj hnhgn");
-      setDialogMode("view");
+  const columns: TableColumn<EmailTemplate>[] = [
+    {
+      id: "name",
+      header: "Template Name",
+      cell: (row) => <span className="font-extrabold text-foreground">{row.name}</span>,
     },
-    onEdit: (template) => {
-      setSelectedTemplate(template);
-      setContent("Write your email content...\nGhdgh fdjvj hnhgn");
-      setDialogMode("edit");
+    {
+      id: "from",
+      header: "From Email",
+      cell: (row) => <span className="font-mono text-muted-foreground">{row.from}</span>,
     },
-    onDelete: setDeleteTarget,
-    onShare: async (template) => {
-      const shareUrl = `${window.location.origin}/settings/email-templates/${template.id}`;
-      if (navigator.share) {
-        await navigator.share({ title: template.name, url: shareUrl });
-      } else {
-        await navigator.clipboard.writeText(shareUrl);
-        toast.success("Template link copied");
-      }
+    {
+      id: "subject",
+      header: "Subject Line",
+      cell: (row) => <span className="font-medium text-foreground">{row.subject}</span>,
     },
-  });
+    {
+      id: "status",
+      header: "Status",
+      cell: (row) => (
+        <span
+          className={`rounded-full px-2.5 py-1 text-xs font-bold ${
+            row.status === "Active"
+              ? "bg-emerald-500/10 text-emerald-600"
+              : "bg-amber-500/10 text-amber-600"
+          }`}
+        >
+          {row.status}
+        </span>
+      ),
+    },
+  ];
 
-  const saveTemplate = () => {
-    if (!selectedTemplate) return;
-    setEditedTemplates((current) => ({
-      ...current,
-      [selectedTemplate.id]: selectedTemplate,
-    }));
-    setDialogMode(null);
-  };
+  const statusOptions = [
+    { label: "Active", value: "active" },
+    { label: "Draft", value: "draft" },
+  ];
 
   return (
-    <div className="grid min-h-screen grid-cols-[248px_minmax(0,1fr)] max-[680px]:block">
-      <Sidebar alwaysOpen />
-      <main className="min-w-0 px-[42px] pt-7 pb-12 max-[1000px]:p-6 max-[680px]:px-4 max-[680px]:pt-5">
-        <ModuleHeader
-          eyebrow="Communication"
-          title="Email templates"
-          description="Create, preview-ready, and manage your email templates with the dashboard theme."
-        >
-          <button
-            type="button"
-            onClick={() => router.push("/settings/email-templates/create")}
-            className="inline-flex items-center gap-2 rounded-[7px] bg-teal px-4 py-3 text-[13px] font-bold text-white hover:bg-[#05685f]"
-          >
-            <Plus size={16} /> New template
-          </button>
-        </ModuleHeader>
-        <div className="mb-5 flex items-center gap-4 max-[800px]:flex-col max-[800px]:items-stretch">
-          <CommonTableFilters
-            search
-            searchValue={query}
-            onSearchChange={(value) => {
-              setQuery(value);
-              setPage(1);
-            }}
-            status
-            statusValue={status}
-            statusOptions={[
-              { label: "Active", value: "active" },
-              { label: "Draft", value: "draft" },
-            ]}
-            onStatusChange={(value) => {
-              setStatus(value || "all");
-              setPage(1);
-            }}
-            className="min-w-0 flex-1"
-          />
-          <button
-            type="button"
-            aria-label="Export templates"
-            className="inline-flex h-9 shrink-0 items-center gap-2 rounded-md border border-border bg-card px-4 text-sm font-semibold text-foreground shadow-sm"
-          >
-            <Download size={16} /> Export
-          </button>
-        </div>
-        <GlobalTable
-          data={filteredRows}
-          columns={columns}
-          totalCount={filteredRows.length}
-          currentPage={page}
-          pageSize={pageSize}
-          onPageChange={setPage}
-          onPageSizeChange={(size) => {
-            setPageSize(size);
-            setPage(1);
-          }}
-          loading={isLoading}
-        />
-      </main>
+    <div className="w-full">
+      <GlobalTable
+        icon={<Mail className="h-5 w-5" />}
+        title="Email Templates"
+        description="Create, preview, and manage your automated notification email templates."
+        breadcrumbs={[
+          { label: "Settings", href: "/settings" },
+          { label: "Email Templates" },
+        ]}
+        showSearch={true}
+        searchQuery={query}
+        onSearchChange={setQuery}
+        searchPlaceholder="Search template name, sender, or subject..."
+        showStatusFilter={true}
+        statusValue={selectedStatus}
+        onStatusChange={setSelectedStatus}
+        statusOptions={statusOptions}
+        primaryAction={{
+          label: "New Template",
+          href: "/settings/email-templates/create",
+          icon: <Plus className="h-4 w-4" />,
+        }}
+        columns={columns}
+        data={filteredRows}
+        loading={isLoading}
+        emptyMessage="No email templates found."
+      />
+
       <Dialog
         open={dialogMode !== null}
         onOpenChange={(open) => !open && setDialogMode(null)}
       >
-        <DialogContent className="max-w-[1048px] gap-0 overflow-hidden bg-[#f1f2f3] p-0">
-          <DialogHeader className="border-b border-[#dfe2e5] px-5 py-5 pr-14">
+        <DialogContent className="max-w-[1048px] gap-0 overflow-hidden bg-card text-foreground p-0">
+          <DialogHeader className="border-b border-border px-5 py-5 pr-14">
             <div className="flex items-center justify-between gap-5 max-[680px]:items-start max-[680px]:flex-col">
               <div className="flex items-center gap-3">
-                <span className="grid size-10 place-items-center rounded-lg bg-teal-soft text-teal">
+                <span className="grid size-10 place-items-center rounded-lg bg-primary/10 text-primary">
                   <Mail size={19} />
                 </span>
                 <div>
                   <div className="flex items-center gap-2">
-                    <DialogTitle className="text-lg">
+                    <DialogTitle className="text-lg font-bold">
                       {selectedTemplate?.name}
                     </DialogTitle>
-                    <span className="rounded-full bg-green-100 px-2.5 py-1 text-[11px] font-semibold text-green-700">
+                    <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-600">
                       {selectedTemplate?.status}
                     </span>
                   </div>
-                  <DialogDescription>
+                  <DialogDescription className="text-xs text-muted-foreground mt-0.5">
                     From:{" "}
                     <span className="font-medium text-foreground">
                       {selectedTemplate?.from}
@@ -200,12 +165,14 @@ export function EmailTemplatesPage() {
                   </DialogDescription>
                 </div>
               </div>
-              <div className="flex items-center gap-4 rounded-lg border border-[#dfe2e5] bg-white px-3 py-2 text-xs text-muted">
+              <div className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-xs text-muted-foreground">
                 <button
                   type="button"
                   aria-label="Desktop preview"
                   onClick={() => setPreviewMode("desktop")}
-                  className={`flex items-center gap-1.5 rounded-md px-2 py-1 ${previewMode === "desktop" ? "bg-muted text-foreground" : ""}`}
+                  className={`flex items-center gap-1.5 rounded-md px-2 py-1 ${
+                    previewMode === "desktop" ? "bg-card text-foreground font-bold" : ""
+                  }`}
                 >
                   <Laptop size={14} /> Desktop
                 </button>
@@ -213,7 +180,9 @@ export function EmailTemplatesPage() {
                   type="button"
                   aria-label="Mobile preview"
                   onClick={() => setPreviewMode("mobile")}
-                  className={`flex items-center gap-1.5 rounded-md px-2 py-1 ${previewMode === "mobile" ? "bg-muted text-foreground" : ""}`}
+                  className={`flex items-center gap-1.5 rounded-md px-2 py-1 ${
+                    previewMode === "mobile" ? "bg-card text-foreground font-bold" : ""
+                  }`}
                 >
                   <Smartphone size={14} /> Mobile
                 </button>
@@ -221,7 +190,9 @@ export function EmailTemplatesPage() {
                   type="button"
                   aria-label="HTML preview"
                   onClick={() => setPreviewMode("html")}
-                  className={`flex items-center gap-1.5 rounded-md px-2 py-1 ${previewMode === "html" ? "bg-muted text-foreground" : ""}`}
+                  className={`flex items-center gap-1.5 rounded-md px-2 py-1 ${
+                    previewMode === "html" ? "bg-card text-foreground font-bold" : ""
+                  }`}
                 >
                   <Code2 size={14} /> HTML
                 </button>
@@ -230,13 +201,13 @@ export function EmailTemplatesPage() {
           </DialogHeader>
           {selectedTemplate ? (
             <div className="grid gap-0">
-              <div className="border-b border-[#dfe2e5] px-5 py-5 text-sm">
-                <span className="mr-5 text-muted">Subject:</span>
-                <strong>{selectedTemplate.subject}</strong>
+              <div className="border-b border-border px-5 py-4 text-xs">
+                <span className="mr-3 text-muted-foreground">Subject:</span>
+                <strong className="text-foreground">{selectedTemplate.subject}</strong>
               </div>
-              <div className="flex min-h-[390px] justify-center p-8 max-[680px]:p-4">
+              <div className="flex min-h-[360px] justify-center p-6 max-[680px]:p-4 bg-muted/20">
                 {previewMode === "html" ? (
-                  <pre className="h-[310px] w-full overflow-auto rounded-xl border border-[#dfe2e5] bg-[#1f2933] p-6 text-xs leading-5 text-[#d5e5e3] shadow-sm">
+                  <pre className="h-[300px] w-full overflow-auto rounded-xl border border-border bg-background p-5 text-xs font-mono text-foreground shadow-sm">
                     {content}
                   </pre>
                 ) : (
@@ -244,11 +215,13 @@ export function EmailTemplatesPage() {
                     value={content}
                     readOnly={dialogMode !== "edit"}
                     onChange={(event) => setContent(event.target.value)}
-                    className={`h-[310px] resize-none rounded-xl border-[#dfe2e5] bg-white p-6 shadow-sm ${previewMode === "mobile" ? "w-[360px] max-w-full" : "w-full"}`}
+                    className={`h-[300px] resize-none rounded-xl border-border bg-background p-5 text-xs shadow-sm ${
+                      previewMode === "mobile" ? "w-[360px] max-w-full" : "w-full"
+                    }`}
                   />
                 )}
               </div>
-              <div className="flex items-center justify-end gap-2 border-t border-[#dfe2e5] px-5 py-4 max-[680px]:flex-wrap">
+              <div className="flex items-center justify-end gap-2 border-t border-border px-5 py-4">
                 <Button
                   type="button"
                   variant="outline"
@@ -263,7 +236,7 @@ export function EmailTemplatesPage() {
                     </Button>
                     <Button
                       type="button"
-                      className="bg-teal text-white hover:bg-[#05685f]"
+                      className="bg-primary text-primary-foreground font-bold hover:opacity-90"
                       onClick={() => setDialogMode("edit")}
                     >
                       Edit Template
@@ -272,8 +245,8 @@ export function EmailTemplatesPage() {
                 ) : (
                   <Button
                     type="button"
-                    className="bg-teal text-white hover:bg-[#05685f]"
-                    onClick={saveTemplate}
+                    className="bg-primary text-primary-foreground font-bold hover:opacity-90"
+                    onClick={() => setDialogMode(null)}
                   >
                     Save changes
                   </Button>
@@ -283,6 +256,7 @@ export function EmailTemplatesPage() {
           ) : null}
         </DialogContent>
       </Dialog>
+
       <ConfirmationDialog
         open={deleteTarget !== null}
         onOpenChange={(open) => !open && setDeleteTarget(null)}

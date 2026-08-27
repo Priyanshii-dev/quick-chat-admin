@@ -1,175 +1,229 @@
 "use client";
 
-import Link from "next/link";
+import React from "react";
+import { Save, Settings, Building2, Share2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { FormInput } from "@/components/shared/custom-input-text";
 import { ModuleHeader } from "@/components/shared/module-header";
-import { FormModeActions, type FormMode } from "@/components/shared/form-mode";
 import { useGeneralSettingsForm } from "../hook/use-general-settings-form";
+import { FormMode } from "@/components/shared/form-mode";
 
 type GeneralSettingsFormProps = { mode?: FormMode; onDelete?: () => void };
 
 export function GeneralSettingsForm({
   mode = "edit",
-  onDelete,
 }: GeneralSettingsFormProps) {
-  const { control, handleSave, isReadOnly, isDirty, isSubmitting } =
+  const { control, handleSave, isReadOnly, isSubmitting } =
     useGeneralSettingsForm(mode);
 
   return (
-    <>
-      <ModuleHeader eyebrow="Workspace" title="General Settings"></ModuleHeader>
+    <div className="w-full space-y-6">
+      <ModuleHeader
+        eyebrow="Workspace"
+        title="General Settings"
+        description="Manage site identity, contact information, locale details, bank accounts, and social links."
+      />
 
-      <form noValidate className="grid gap-[18px]" onSubmit={handleSave}>
-        <fieldset
-          disabled={isReadOnly}
-          className="grid gap-[18px] border-0 p-0"
-        >
-          <section className="rounded-lg border border-line bg-panel p-[22px] shadow-panel [&>h2]:mb-5 [&>h2]:text-sm [&>h2]:font-bold">
-            <h2>Website settings</h2>
-            <div className="grid grid-cols-2 gap-x-[22px] gap-y-[18px] max-[680px]:grid-cols-1 [&>label:last-child:nth-child(odd)]:col-span-full">
+      <form noValidate className="space-y-6" onSubmit={handleSave}>
+        <fieldset disabled={isReadOnly} className="space-y-6 border-0 p-0">
+          {/* Section 1: Website Settings */}
+          <section className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
+            <div className="flex items-center gap-2.5 border-b border-border/60 pb-3.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Settings className="h-5 w-5" />
+              </div>
+              <h2 className="text-lg font-extrabold text-foreground tracking-tight">
+                Website Settings
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <FormInput
                 name="websiteName"
                 label="Website Name"
                 control={control}
+                placeholder="QuietChat"
                 required
               />
               <FormInput
                 name="email"
-                label="Email"
+                label="Primary Contact Email"
                 control={control}
                 type="email"
+                placeholder="contact@quietchat.in"
                 required
               />
               <FormInput
                 name="mobileNo"
-                label="Mobile No"
+                label="Mobile Number"
                 control={control}
+                placeholder="+91 9876543210"
                 required
               />
               <FormInput
                 name="whatsappNumber"
-                label="WhatsApp Number"
+                label="WhatsApp Support Number"
                 control={control}
+                placeholder="+91 9876543210"
                 required
               />
-              <FormInput name="city" label="City" control={control} required />
+              <FormInput
+                name="city"
+                label="City"
+                control={control}
+                placeholder="New Delhi"
+                required
+              />
               <FormInput
                 name="state"
                 label="State"
                 control={control}
+                placeholder="Delhi"
                 required
               />
-              <FormInput name="zip" label="Zip" control={control} required />
+              <FormInput
+                name="zip"
+                label="ZIP / Postal Code"
+                control={control}
+                placeholder="110001"
+                required
+              />
               <FormInput
                 name="country"
                 label="Country"
                 control={control}
+                placeholder="India"
                 required
               />
-              <FormInput
-                name="address"
-                label="Address"
-                control={control}
-                textarea
-                rows={3}
-                required
-              />
+              <div className="md:col-span-2">
+                <FormInput
+                  name="address"
+                  label="Office / Business Address"
+                  control={control}
+                  textarea
+                  rows={3}
+                  placeholder="Enter full registered address..."
+                  required
+                />
+              </div>
             </div>
           </section>
 
-          <section className="rounded-lg border border-line bg-panel p-[22px] shadow-panel [&>h2]:mb-5 [&>h2]:text-sm [&>h2]:font-bold">
-            <h2>Bank Details</h2>
-            <div className="grid grid-cols-2 gap-x-[22px] gap-y-[18px] max-[680px]:grid-cols-1">
+          {/* Section 2: Bank Details */}
+          <section className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
+            <div className="flex items-center gap-2.5 border-b border-border/60 pb-3.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Building2 className="h-5 w-5" />
+              </div>
+              <h2 className="text-lg font-extrabold text-foreground tracking-tight">
+                Bank & Payment Details
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <FormInput
                 name="bankName"
                 label="Bank Name"
                 control={control}
-                placeholder="Enter Bank Name"
+                placeholder="HDFC Bank / ICICI Bank"
                 required
               />
               <FormInput
                 name="accountHolderName"
                 label="Account Holder Name"
                 control={control}
-                placeholder="Enter Account Holder Name"
+                placeholder="QuietChat Technologies Pvt Ltd"
                 required
               />
               <FormInput
                 name="accountNumber"
                 label="Account Number"
                 control={control}
-                placeholder="Enter Account Number"
+                placeholder="50200012345678"
                 required
               />
               <FormInput
                 name="ifscCode"
                 label="IFSC Code"
                 control={control}
-                placeholder="Enter IFSC Code"
+                placeholder="HDFC0000123"
                 required
               />
             </div>
           </section>
 
-          <section className="rounded-lg border border-line bg-panel p-[22px] shadow-panel [&>h2]:mb-5 [&>h2]:text-sm [&>h2]:font-bold">
-            <h2>Social Media Links</h2>
-            <div className="grid grid-cols-2 gap-x-[22px] gap-y-[18px] max-[680px]:grid-cols-1">
+          {/* Section 3: Social Media Links */}
+          <section className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
+            <div className="flex items-center gap-2.5 border-b border-border/60 pb-3.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Share2 className="h-5 w-5" />
+              </div>
+              <h2 className="text-lg font-extrabold text-foreground tracking-tight">
+                Social Media Links
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <FormInput
                 name="facebookLink"
-                label="Facebook Link"
+                label="Facebook Profile URL"
                 control={control}
-                placeholder="https://facebook.com/..."
+                placeholder="https://facebook.com/quietchat"
                 required
               />
               <FormInput
                 name="instagramLink"
-                label="Instagram Link"
+                label="Instagram Profile URL"
                 control={control}
-                placeholder="https://instagram.com/..."
+                placeholder="https://instagram.com/quietchat"
                 required
               />
               <FormInput
                 name="twitterLink"
-                label="Twitter Link"
+                label="Twitter / X Profile URL"
                 control={control}
-                placeholder="https://twitter.com/..."
+                placeholder="https://x.com/quietchat"
                 required
               />
               <FormInput
                 name="linkedinLink"
-                label="LinkedIn Link"
+                label="LinkedIn Company URL"
                 control={control}
-                placeholder="https://linkedin.com/..."
+                placeholder="https://linkedin.com/company/quietchat"
                 required
               />
               <FormInput
                 name="pinterestLink"
-                label="Pinterest Link"
+                label="Pinterest Profile URL"
                 control={control}
-                placeholder="https://pinterest.com/..."
+                placeholder="https://pinterest.com/quietchat"
                 required
               />
               <FormInput
                 name="youtubeLink"
-                label="YouTube Link"
+                label="YouTube Channel URL"
                 control={control}
-                placeholder="https://youtube.com/..."
+                placeholder="https://youtube.com/@quietchat"
                 required
               />
             </div>
           </section>
         </fieldset>
 
-        <div className="flex justify-end">
-          <FormModeActions
-            mode={mode}
-            onDelete={onDelete}
-            className="min-w-[180px]"
-            isSubmitting={isSubmitting}
-            isDisabled={!isDirty}
-          />
-        </div>
+        {/* Save Settings Action Button */}
+        {!isReadOnly && (
+          <div className="flex items-center justify-end gap-3 pt-3">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="gap-2 bg-primary text-primary-foreground font-bold h-11 px-8 hover:opacity-90 shadow-md text-sm"
+            >
+              <Save className="h-4 w-4" />
+              {isSubmitting ? "Saving General Settings..." : "Save General Settings"}
+            </Button>
+          </div>
+        )}
       </form>
-    </>
+    </div>
   );
 }

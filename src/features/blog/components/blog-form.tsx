@@ -1,172 +1,234 @@
 "use client";
 
-import { ImagePlus, Plus } from "lucide-react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import { useForm, useWatch } from "react-hook-form";
-import { AppButton } from "@/components/shared/app-button";
-import { FormInput } from "@/components/shared/custom-input-text";
-import { blogSchema, type BlogFormValues } from "../schema/blog.schema";
+import { blogPostSchema, BlogPostFormValues } from "../schema/blog.schema";
+import { blogService } from "../services/blog.service";
+import { FormCardLayout } from "@/components/shared/form-card-layout";
+import { ImageUploadDropzone } from "@/components/shared/image-upload-dropzone";
+import { SearchableSelect } from "@/components/ui/searchable-select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { FileText, Save, Sparkles } from "lucide-react";
 
-export function NewBlogForm({
-  onCanSaveChange,
-}: {
-  onCanSaveChange?: (canSave: boolean) => void;
-}) {
-  const { control, handleSubmit } = useForm<BlogFormValues>({
-    resolver: zodResolver(blogSchema),
+export function BlogForm() {
+  const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<BlogPostFormValues>({
+    resolver: zodResolver(blogPostSchema),
     defaultValues: {
       title: "",
       slug: "",
-      summary: "",
+      categoryId: "1",
+      description: "",
       content: "",
-      author: "",
-      category: "",
-      publishDate: "",
-      seoTitle: "",
-      seoMetaTags: "",
-      canonicalUrl: "",
-      seoDescription: "",
+      status: "Draft",
+      imageUrl: "",
+      author: "Admin",
     },
-    mode: "onBlur",
   });
-  const values = useWatch({ control });
-  const hasValue = Object.values(values).some(
-    (value) => String(value ?? "").trim().length > 0,
-  );
 
-  useEffect(() => {
-    onCanSaveChange?.(hasValue);
-  }, [hasValue, onCanSaveChange]);
+  const titleValue = watch("title");
+  const categoryIdValue = watch("categoryId");
+  const statusValue = watch("status");
+  const imageUrlValue = watch("imageUrl");
 
-  const saveDraft = (values: BlogFormValues) => {
-    console.log("Blog draft submitted", values);
+  const generateSlug = () => {
+    if (!titleValue) return;
+    const slugified = titleValue
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/[\s_-]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    setValue("slug", slugified, { shouldValidate: true });
+  };
+
+  const categoryOptions = [
+    { label: "Technology", value: "1" },
+    { label: "Tutorials", value: "2" },
+    { label: "Updates", value: "3" },
+    { label: "General & Product", value: "4" },
+  ];
+
+  const statusOptions = [
+    { label: "Draft", value: "Draft" },
+    { label: "Published", value: "Published" },
+    { label: "Archived", value: "Archived" },
+  ];
+
+  const onSubmit = async (data: BlogPostFormValues) => {
+    try {
+      setSubmitting(true);
+      await blogService.createBlog(data);
+      toast.success("Blog article created successfully!");
+      router.push("/blog");
+    } catch (err) {
+      toast.error("Failed to create blog post");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <form
-      id="new-blog-form"
-      className="space-y-5"
-      onSubmit={handleSubmit(saveDraft)}
-    >
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <section className="rounded-xl border border-line bg-panel p-5 shadow-panel">
-          <h2 className="mb-4 font-semibold text-ink">Content information</h2>
-          <div className="grid gap-4">
-            <FormInput
-              name="title"
-              label="Title"
-              control={control}
-              placeholder="Enter blog title"
-              required
-            />
-            <FormInput
-              name="slug"
-              label="Slug"
-              control={control}
-              placeholder="blog-title-slug"
-              required
-            />
-            <FormInput
-              name="summary"
-              label="Summary"
-              control={control}
-              textarea
-              className="min-h-24"
-              placeholder="Briefly summarize the blog post..."
-            />
-            <FormInput
-              name="content"
-              label="Content"
-              control={control}
-              textarea
-              className="min-h-[300px]"
-              placeholder="Write your blog content here..."
-              required
-            />
-          </div>
-          <div className="mt-5 border-t border-line pt-4">
-            <h3 className="text-sm font-semibold text-ink">
-              Dynamic blog blocks
-            </h3>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <AppButton variant="secondary" type="button" size="sm">
-                <Plus size={14} /> Product card
-              </AppButton>
-              <AppButton variant="secondary" type="button" size="sm">
-                <Plus size={14} /> CTA banner
-              </AppButton>
-              <AppButton variant="secondary" type="button" size="sm">
-                <Plus size={14} /> FAQ block
-              </AppButton>
-            </div>
-          </div>
-        </section>
-        <section className="rounded-xl border border-line bg-panel p-5 shadow-panel">
-          <h2 className="mb-4 font-semibold text-ink">Publishing & details</h2>
-          <button
+    <FormCardLayout
+      icon={<FileText className="h-5 w-5" />}
+      title="Create New Blog Post"
+      description="Fill in the details below to publish a new article for QuietChat."
+      breadcrumbs={[
+        { label: "Blog Management", href: "/blog" },
+        { label: "Add Blog" },
+      ]}
+      backHref="/blog"
+      onSubmit={handleSubmit(onSubmit)}
+      footerActions={
+        <>
+          <Button
             type="button"
-            className="mb-5 grid min-h-40 w-full place-items-center rounded-lg border border-dashed border-line bg-paper text-sm text-muted-foreground hover:border-teal hover:text-teal"
+            variant="outline"
+            onClick={() => router.push("/blog")}
+            className="border-border text-xs font-semibold h-10 px-4"
           >
-            <ImagePlus size={24} />
-            <span>Upload header image</span>
-          </button>
-          <div className="grid gap-4">
-            <FormInput
-              name="author"
-              label="Author"
-              control={control}
-              placeholder="Enter author name"
-              required
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            disabled={submitting}
+            className="gap-2 bg-primary text-primary-foreground font-bold px-6 h-10 hover:opacity-90 shadow-md"
+          >
+            <Save className="h-4 w-4" />
+            {submitting ? "Saving..." : "Create Blog Post"}
+          </Button>
+        </>
+      }
+    >
+      <div className="grid gap-5 md:grid-cols-2">
+        {/* Title Field */}
+        <div className="space-y-1.5 md:col-span-2">
+          <label className="text-xs font-bold text-foreground">
+            BLOG TITLE <span className="text-destructive">*</span>
+          </label>
+          <div className="flex gap-2">
+            <Input
+              {...register("title")}
+              placeholder="Enter an engaging blog title..."
+              className="bg-background text-xs h-10 rounded-md border-border"
             />
-            <FormInput
-              name="category"
-              label="Category"
-              control={control}
-              placeholder="Select category"
-              required
-            />
-            <FormInput
-              name="publishDate"
-              label="Publish date"
-              control={control}
-              type="date"
-            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={generateSlug}
+              className="gap-1.5 whitespace-nowrap text-xs h-10 px-3.5 rounded-md border-border font-bold"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              Auto Slug
+            </Button>
           </div>
-        </section>
-      </div>
-      <section className="rounded-xl border border-line bg-panel p-5 shadow-panel">
-        <h2 className="mb-4 font-semibold text-ink">SEO settings</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          <FormInput
-            name="seoTitle"
-            label="SEO title"
-            control={control}
-            className="md:col-span-2"
-            placeholder="SEO title"
+          {errors.title && (
+            <p className="text-xs text-destructive">{errors.title.message}</p>
+          )}
+        </div>
+
+        {/* Slug Field */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-foreground">
+            URL SLUG <span className="text-destructive">*</span>
+          </label>
+          <Input
+            {...register("slug")}
+            placeholder="e.g. 10-tips-for-scaling"
+            className="bg-background text-xs font-mono h-10 rounded-md border-border"
           />
-          <FormInput
-            name="seoMetaTags"
-            label="SEO meta tags"
-            control={control}
-            placeholder="keywords, tag1, tag2"
+          {errors.slug && (
+            <p className="text-xs text-destructive">{errors.slug.message}</p>
+          )}
+        </div>
+
+        {/* Category Searchable Select */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-foreground">
+            CATEGORY <span className="text-destructive">*</span>
+          </label>
+          <SearchableSelect
+            options={categoryOptions}
+            value={categoryIdValue}
+            onChange={(val) => setValue("categoryId", val, { shouldValidate: true })}
+            placeholder="Select blog category..."
           />
-          <FormInput
-            name="canonicalUrl"
-            label="Canonical URL"
-            control={control}
-            placeholder="https://example.com/blog/slug"
-          />
-          <FormInput
-            name="seoDescription"
-            label="SEO description"
-            control={control}
-            textarea
-            className="md:col-span-2"
-            placeholder="Brief description for search results..."
+          {errors.categoryId && (
+            <p className="text-xs text-destructive">{errors.categoryId.message}</p>
+          )}
+        </div>
+
+        {/* Author */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-foreground">AUTHOR</label>
+          <Input
+            {...register("author")}
+            placeholder="Admin"
+            className="bg-background text-xs h-10 rounded-md border-border"
           />
         </div>
-      </section>
-    </form>
+
+        {/* Status Searchable Select */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-foreground">PUBLISH STATUS</label>
+          <SearchableSelect
+            options={statusOptions}
+            value={statusValue || "Draft"}
+            onChange={(val) => setValue("status", val as any)}
+            placeholder="Select status..."
+          />
+        </div>
+
+        {/* Image Upload Dropzone Card */}
+        <div className="md:col-span-2">
+          <ImageUploadDropzone
+            label="COVER IMAGE"
+            acceptText="Upload Cover Image (JPG, PNG)"
+            value={imageUrlValue}
+            onChange={(url) => setValue("imageUrl", url)}
+          />
+        </div>
+
+        {/* Short Summary */}
+        <div className="space-y-1.5 md:col-span-2">
+          <label className="text-xs font-bold text-foreground">SHORT SUMMARY</label>
+          <Textarea
+            {...register("description")}
+            placeholder="Provide a brief summary for blog listings..."
+            rows={2}
+            className="bg-background text-xs rounded-md border-border"
+          />
+        </div>
+
+        {/* Full Content */}
+        <div className="space-y-1.5 md:col-span-2">
+          <label className="text-xs font-bold text-foreground">
+            FULL CONTENT <span className="text-destructive">*</span>
+          </label>
+          <Textarea
+            {...register("content")}
+            placeholder="Write your article content here..."
+            rows={6}
+            className="bg-background text-xs rounded-md border-border font-sans"
+          />
+          {errors.content && (
+            <p className="text-xs text-destructive">{errors.content.message}</p>
+          )}
+        </div>
+      </div>
+    </FormCardLayout>
   );
 }

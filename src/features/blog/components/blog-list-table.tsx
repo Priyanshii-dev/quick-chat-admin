@@ -1,172 +1,125 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { GlobalTable } from "@/components/shared/table/global-table";
-import { CommonTableFilters } from "@/components/shared/table/common-table-filters";
-import { ConfirmationDialog } from "@/components/shared/confirmation-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { useBlogPosts } from "../hook/blog.hook";
-import type { BlogPost } from "../types/types";
+import { blogService } from "../services/blog.service";
+import { BlogPost } from "../types/types";
 import { getBlogColumns } from "./blog-columns";
+import { GlobalTable } from "@/components/table/global-table";
+import { useBlogStore } from "../store/blog.store";
+import { toast } from "sonner";
+import { BookOpen, Plus } from "lucide-react";
 
-const samplePosts: BlogPost[] = [
-  {
-    title: "7 Simple Habits for a Healthier Everyday Life",
-    slug: "healthier-everyday-life-habits",
-    description: "Discover 7 simple, practical habits for a healthier routine.",
-    author: "Hisgro Wellness Editorial Team",
-    category: "Hair Care",
-    status: "Published",
-    updatedAt: "12 Aug 2026",
-    views: 7,
-  },
-  {
-    title: "Hair Fall vs Hair Loss: Understanding the Difference",
-    slug: "hair-fall-vs-hair-loss",
-    description: "Understand the real difference and what your hair may need.",
-    author: "HisGro Team",
-    category: "Hair Growth",
-    status: "Published",
-    updatedAt: "6 Aug 2026",
-    views: 171,
-  },
-  {
-    title: "Best Daily Routine to Stop Hair Fall Naturally",
-    slug: "best-daily-routine",
-    description: "Discover the best daily routine for stronger-looking hair.",
-    author: "HisGro Team",
-    category: "Hair Supplements",
-    status: "Published",
-    updatedAt: "14 Aug 2026",
-    views: 209,
-  },
-  {
-    title: "Do Hair Fall Products Actually Work?",
-    slug: "do-hair-fall-products-work",
-    description: "Discover the truth about hair fall products.",
-    author: "HisGro Hair Specialist",
-    category: "Hair Growth",
-    status: "Draft",
-    updatedAt: "12 Aug 2026",
-    views: 126,
-  },
-];
-
-export function BlogTable() {
+export function BlogListTable() {
   const router = useRouter();
-  const { data, isLoading } = useBlogPosts();
-  const [query, setQuery] = useState("");
-  const [status, setStatus] = useState("all");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [deletedSlugs, setDeletedSlugs] = useState<string[]>([]);
-  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<BlogPost | null>(null);
-  const posts = data?.items?.length ? data.items : samplePosts;
-  const filteredPosts = useMemo(
-    () =>
-      posts.filter((post) => {
-        if (deletedSlugs.includes(post.slug)) return false;
-        const matchesQuery = `${post.title} ${post.category} ${post.author}`
-          .toLowerCase()
-          .includes(query.toLowerCase());
-        return (
-          matchesQuery &&
-          (status === "all" || post.status.toLowerCase() === status)
-        );
-      }),
-    [posts, query, status, deletedSlugs],
-  );
-  const columns = getBlogColumns({
-    onView: setSelectedPost,
-    onEdit: (post) =>
-      router.push(`/blog/new?edit=${encodeURIComponent(post.slug)}`),
-    onDelete: setDeleteTarget,
+  const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const {
+    searchQuery,
+    selectedCategory,
+    selectedStatus,
+    setSearchQuery,
+    setSelectedCategory,
+    setSelectedStatus,
+  } = useBlogStore();
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+  const fetchBlogs = async () => {
+    try {
+      setLoading(true);
+      const data = await blogService.getBlogs();
+      setBlogs(data);
+    } catch (err) {
+      toast.error("Failed to load blog posts");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await blogService.deleteBlog(id);
+      setBlogs((prev) => prev.filter((b) => b.id !== id));
+      toast.success("Blog post deleted successfully");
+    } catch (err) {
+      toast.error("Failed to delete blog post");
+    }
+  };
+
+  const handleToggleStatus = async (blog: BlogPost) => {
+    const newStatus = blog.status === "Published" ? "Draft" : "Published";
+    setBlogs((prev) =>
+      prev.map((b) => (b.id === blog.id ? { ...b, status: newStatus } : b))
+    );
+    toast.success(`Status updated to ${newStatus}`);
+  };
+
+  const handleEdit = (blog: BlogPost) => {
+    router.push(`/blog/add?id=${blog.id}`);
+  };
+
+  const filteredBlogs = blogs.filter((blog) => {
+    const matchesSearch =
+      !searchQuery ||
+      blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      blog.slug.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesCategory =
+      !selectedCategory || blog.category === selectedCategory;
+
+    const matchesStatus = !selectedStatus || blog.status === selectedStatus;
+
+    return matchesSearch && matchesCategory && matchesStatus;
   });
 
+  const columns = getBlogColumns(handleEdit, handleDelete, handleToggleStatus);
+
+  const categoryOptions = [
+    { label: "Technology", value: "Technology" },
+    { label: "Tutorials", value: "Tutorials" },
+    { label: "Updates", value: "Updates" },
+  ];
+
+  const statusOptions = [
+    { label: "Published", value: "Published" },
+    { label: "Draft", value: "Draft" },
+  ];
+
   return (
-    <section className="max-[680px]:p-0">
-      <CommonTableFilters
-        search
-        searchValue={query}
-        onSearchChange={(value) => {
-          setQuery(value);
-          setPage(1);
-        }}
-        status
-        statusValue={status}
-        statusOptions={[
-          { label: "Published", value: "published" },
-          { label: "Draft", value: "draft" },
-        ]}
-        onStatusChange={(value) => {
-          setStatus(value || "all");
-          setPage(1);
-        }}
-        className="mb-4"
-      />
-      <GlobalTable
-        data={filteredPosts}
-        totalCount={filteredPosts.length}
-        currentPage={page}
-        pageSize={pageSize}
-        onPageChange={setPage}
-        onPageSizeChange={(size) => {
-          setPageSize(size);
-          setPage(1);
-        }}
-        loading={isLoading}
-        columns={columns}
-      />
-      <Dialog
-        open={selectedPost !== null}
-        onOpenChange={(open) => !open && setSelectedPost(null)}
-      >
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{selectedPost?.title}</DialogTitle>
-            <DialogDescription>
-              {selectedPost?.description ?? "No description available."}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-2 text-sm text-muted-foreground">
-            <p>
-              <strong className="text-foreground">Author:</strong>{" "}
-              {selectedPost?.author ?? "N/A"}
-            </p>
-            <p>
-              <strong className="text-foreground">Category:</strong>{" "}
-              {selectedPost?.category ?? "Uncategorized"}
-            </p>
-            <p>
-              <strong className="text-foreground">Updated:</strong>{" "}
-              {selectedPost?.updatedAt}
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
-      <ConfirmationDialog
-        open={deleteTarget !== null}
-        onOpenChange={(open) => !open && setDeleteTarget(null)}
-        title="Delete blog post"
-        description={
-          deleteTarget
-            ? `Are you sure you want to delete "${deleteTarget.title}"?`
-            : undefined
-        }
-        onConfirm={() => {
-          if (deleteTarget)
-            setDeletedSlugs((current) => [...current, deleteTarget.slug]);
-          setDeleteTarget(null);
-        }}
-      />
-    </section>
+    <GlobalTable
+      icon={<BookOpen className="h-5 w-5" />}
+      title="Blog List"
+      description="Manage your blog posts and their visibility."
+      breadcrumbs={[{ label: "Blog Management" }, { label: "Blog List" }]}
+      showSearch={true}
+      searchQuery={searchQuery}
+      onSearchChange={setSearchQuery}
+      searchPlaceholder="Search by name or slug..."
+      showCategoryFilter={true}
+      categoryValue={selectedCategory}
+      onCategoryChange={setSelectedCategory}
+      categoryOptions={categoryOptions}
+      showStatusFilter={true}
+      statusValue={selectedStatus}
+      onStatusChange={setSelectedStatus}
+      statusOptions={statusOptions}
+      primaryAction={{
+        label: "Add Blog",
+        href: "/blog/add",
+        icon: <Plus className="h-4 w-4" />,
+      }}
+      secondaryAction={{
+        label: "Refresh",
+        onClick: fetchBlogs,
+      }}
+      columns={columns}
+      data={filteredBlogs}
+      loading={loading}
+      emptyMessage="No blog posts found."
+    />
   );
 }

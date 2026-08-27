@@ -1,81 +1,93 @@
 "use client";
 
-import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
+import React from "react";
+import { Facebook, Instagram, Linkedin, Twitter, Save, Share2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { FormInput } from "@/components/shared/custom-input-text";
 import { ModuleHeader } from "@/components/shared/module-header";
-import { FormModeActions, type FormMode } from "@/components/shared/form-mode";
 import { useSocialMediaSettingsForm } from "../hook/use-social-media";
+import { FormMode } from "@/components/shared/form-mode";
 
 type SocialMediaSettingsFormProps = { mode?: FormMode; onDelete?: () => void };
 
 export function SocialMediaSettingsForm({
   mode = "edit",
-  onDelete,
 }: SocialMediaSettingsFormProps) {
   const { control, handleSave, isReadOnly } = useSocialMediaSettingsForm(mode);
 
   return (
-    <>
-      <ModuleHeader eyebrow="Distribution" title="Social Media"></ModuleHeader>
+    <div className="w-full space-y-6">
+      <ModuleHeader
+        eyebrow="Distribution"
+        title="Social Media Links"
+        description="Connect and configure your official social media profile URLs."
+      />
 
-      <form
-        noValidate
-        id="social-settings-form"
-        className="grid gap-[18px]"
-        onSubmit={handleSave}
-      >
+      <form noValidate onSubmit={handleSave} className="space-y-6">
         <fieldset disabled={isReadOnly} className="border-0 p-0">
-          <section className="rounded-lg border border-line bg-panel p-[22px] shadow-panel">
-            <div className="grid grid-cols-2 gap-x-[22px] gap-y-[18px] max-[680px]:grid-cols-1">
+          <section className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5">
+            <div className="flex items-center gap-2.5 border-b border-border/60 pb-3.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Share2 className="h-5 w-5" />
+              </div>
+              <h2 className="text-lg font-extrabold text-foreground tracking-tight">
+                Social Profile Handles
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <FormInput
                 name="instagram"
-                label="Instagram"
+                label="Instagram Profile"
                 control={control}
                 type="url"
                 placeholder="https://instagram.com/your-profile"
-                startAdornment={<Instagram size={16} />}
-                inputWrapperClassName="flex items-center gap-2 text-muted [&>input]:min-w-0"
+                startAdornment={<Instagram className="h-4 w-4 text-primary shrink-0" />}
+                inputWrapperClassName="flex items-center gap-2.5"
               />
               <FormInput
                 name="facebook"
-                label="Facebook"
+                label="Facebook Page"
                 control={control}
                 type="url"
                 placeholder="https://facebook.com/your-page"
-                startAdornment={<Facebook size={16} />}
-                inputWrapperClassName="flex items-center gap-2 text-muted [&>input]:min-w-0"
+                startAdornment={<Facebook className="h-4 w-4 text-primary shrink-0" />}
+                inputWrapperClassName="flex items-center gap-2.5"
               />
               <FormInput
                 name="twitter"
-                label="Twitter"
+                label="Twitter / X Profile"
                 control={control}
                 type="url"
                 placeholder="https://twitter.com/your-profile"
-                startAdornment={<Twitter size={16} />}
-                inputWrapperClassName="flex items-center gap-2 text-muted [&>input]:min-w-0"
+                startAdornment={<Twitter className="h-4 w-4 text-primary shrink-0" />}
+                inputWrapperClassName="flex items-center gap-2.5"
               />
               <FormInput
                 name="linkedin"
-                label="LinkedIn"
+                label="LinkedIn Company Page"
                 control={control}
                 type="url"
                 placeholder="https://linkedin.com/company/your-company"
-                startAdornment={<Linkedin size={16} />}
-                inputWrapperClassName="flex items-center gap-2 text-muted [&>input]:min-w-0"
+                startAdornment={<Linkedin className="h-4 w-4 text-primary shrink-0" />}
+                inputWrapperClassName="flex items-center gap-2.5"
               />
             </div>
           </section>
         </fieldset>
-      </form>
 
-      <div className="mt-4 flex justify-end">
-        <FormModeActions
-          mode={mode}
-          onDelete={onDelete}
-          formId="social-settings-form"
-          className="min-w-[180px]"
-        />
-      </div>
-    </>
+        {!isReadOnly && (
+          <div className="flex justify-end pt-2">
+            <Button
+              type="submit"
+              className="gap-2 bg-primary text-primary-foreground font-bold h-11 px-8 hover:opacity-90 shadow-md text-sm"
+            >
+              <Save className="h-4 w-4" />
+              Save Social Media
+            </Button>
+          </div>
+        )}
+      </form>
+    </div>
   );
 }

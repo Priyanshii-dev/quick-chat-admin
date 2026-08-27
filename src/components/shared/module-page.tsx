@@ -3,7 +3,6 @@
 import { Check, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { SeoSettingsForm } from "@/features/settings/components/seo-settings/components/seo-settings-form";
-import { Sidebar } from "@/components/layout/sidebar";
 import { AppButton } from "./app-button";
 import { ModuleHeader } from "./module-header";
 
@@ -13,6 +12,7 @@ type ModuleProps = {
   description: string;
   kind: ModuleKind;
 };
+
 export type ModuleKind =
   | "seo"
   | "blog"
@@ -68,43 +68,42 @@ export function ModulePage({ title, eyebrow, description, kind }: ModuleProps) {
     toast.success(`${data.action} opened`, {
       description: "This workflow is ready for your next update.",
     });
+
   return (
-    <div className="grid min-h-screen grid-cols-[248px_minmax(0,1fr)]">
-      <Sidebar />
-      <main className="min-w-0 px-[42px] rounded-md pt-7 max-[1000px]:p-6 max-[680px]:px-4 max-[680px]:pt-5">
-        <ModuleHeader eyebrow={eyebrow} title={title} description={description}>
-          <AppButton type="button" variant="primary" onClick={action}>
-            <Plus size={16} /> {data.action}
-          </AppButton>
-        </ModuleHeader>
-        <section className="min-h-[360px] rounded-lg border border-line bg-panel p-6 shadow-panel">
-          {kind === "seo" ? (
-            <SeoSettingsForm />
-          ) : (
-            <div className="grid max-w-[760px]">
-              {data.rows.map((row, index) => (
-                <div
-                  className="flex items-center justify-between gap-5 border-b border-line py-5 text-sm"
-                  key={row}
-                >
-                  <div>
-                    <strong className="mb-[7px] block">{row}</strong>
-                    <span className="text-xs text-muted">
-                      {kind === "subscribers"
-                        ? `${[248, 12, 8][index]} records`
-                        : "Configuration is up to date"}
-                    </span>
-                  </div>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-soft px-2 py-1.5 text-[11px] font-bold text-teal">
-                    <Check size={12} />{" "}
-                    {kind === "social" && index === 0 ? "Connected" : "Active"}
+    <div className="w-full space-y-4">
+      <ModuleHeader eyebrow={eyebrow} title={title} description={description}>
+        <AppButton type="button" variant="primary" onClick={action}>
+          <Plus size={16} /> {data.action}
+        </AppButton>
+      </ModuleHeader>
+
+      <section className="rounded-xl border border-border bg-card p-6 shadow-sm">
+        {kind === "seo" ? (
+          <SeoSettingsForm />
+        ) : (
+          <div className="grid max-w-[760px]">
+            {data.rows.map((row, index) => (
+              <div
+                className="flex items-center justify-between gap-5 border-b border-border py-4 text-sm"
+                key={row}
+              >
+                <div>
+                  <strong className="mb-1 block font-bold text-foreground">{row}</strong>
+                  <span className="text-xs text-muted-foreground">
+                    {kind === "subscribers"
+                      ? `${[248, 12, 8][index]} records`
+                      : "Configuration is up to date"}
                   </span>
                 </div>
-              ))}
-            </div>
-          )}
-        </section>
-      </main>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-600">
+                  <Check size={12} />{" "}
+                  {kind === "social" && index === 0 ? "Connected" : "Active"}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }

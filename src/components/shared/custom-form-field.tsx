@@ -20,13 +20,13 @@ export function CustomFormField({
 
   return (
     <div className="grid self-start gap-1.5">
-      <label htmlFor={id} className="text-sm leading-6 text-muted">
+      <label htmlFor={id} className="text-xs font-bold text-foreground">
         {label}
         {required ? <RequiredAsterisk /> : null}
       </label>
       {children}
       {error ? (
-        <small id={errorId} role="alert" className="text-xs text-destructive">
+        <small id={errorId} role="alert" className="text-xs font-semibold text-destructive mt-0.5">
           {error}
         </small>
       ) : null}
