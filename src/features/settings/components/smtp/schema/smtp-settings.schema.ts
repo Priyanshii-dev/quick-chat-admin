@@ -3,7 +3,10 @@ import { optionalEmail, requiredEmail, requiredString } from "@/lib/validation";
 
 export const smtpSettingsSchema = z.object({
   host: requiredString("SMTP host"),
-  port: requiredString("SMTP port").regex(/^\d+$/, "SMTP port must be a number"),
+  port: requiredString("SMTP port").regex(
+    /^\d+$/,
+    "SMTP port must be a number",
+  ),
   username: requiredString("SMTP username"),
   password: requiredString("SMTP password"),
   encryption: requiredString("Encryption"),

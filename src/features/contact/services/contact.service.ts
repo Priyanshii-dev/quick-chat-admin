@@ -6,7 +6,8 @@ const mockInquiries: ContactInquiry[] = [
     name: "Rahul Verma",
     email: "rahul@example.com",
     subject: "Business Partnership & Ad Inquiry",
-    message: "Hello team, I would like to inquire about banner advertising options on QuietChat app.",
+    message:
+      "Hello team, I would like to inquire about banner advertising options on QuietChat app.",
     status: "New",
     createdAt: "2026-08-27 10:15 AM",
   },
@@ -42,7 +43,10 @@ export const contactService = {
     }
     return Promise.resolve(false);
   },
-  updateStatus: async (id: string, status: ContactInquiry["status"]): Promise<boolean> => {
+  updateStatus: async (
+    id: string,
+    status: ContactInquiry["status"],
+  ): Promise<boolean> => {
     const item = mockInquiries.find((i) => i.id === id);
     if (item) {
       item.status = status;

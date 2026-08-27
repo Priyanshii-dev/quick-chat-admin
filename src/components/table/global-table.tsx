@@ -17,6 +17,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DateRange, DateRangeValue } from "./date-range";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export interface BreadcrumbItem {
   label: string;
@@ -167,13 +174,15 @@ export function GlobalTable<TData>({
                   onClick={secondaryAction.onClick}
                   className="gap-2 border-border bg-background hover:bg-accent text-xs font-semibold h-9"
                 >
-                  {secondaryAction.icon || <RefreshCw className="h-3.5 w-3.5" />}
+                  {secondaryAction.icon || (
+                    <RefreshCw className="h-3.5 w-3.5" />
+                  )}
                   {secondaryAction.label}
                 </Button>
               )}
 
-              {primaryAction && (
-                primaryAction.href ? (
+              {primaryAction &&
+                (primaryAction.href ? (
                   <Link href={primaryAction.href}>
                     <Button
                       size="sm"
@@ -192,8 +201,7 @@ export function GlobalTable<TData>({
                     {primaryAction.icon || <Plus className="h-4 w-4" />}
                     {primaryAction.label}
                   </Button>
-                )
-              )}
+                ))}
             </div>
           </div>
         )}
@@ -227,34 +235,46 @@ export function GlobalTable<TData>({
 
               {/* Status Select Filter */}
               {showStatusFilter && onStatusChange && (
-                <select
+                <Select
                   value={statusValue}
-                  onChange={(e) => onStatusChange(e.target.value)}
-                  className="h-9 rounded-md border border-border bg-background px-3 text-xs font-semibold text-foreground focus:outline-none"
+                  onValueChange={(value) =>
+                    onStatusChange(value === "all" ? "" : (value ?? ""))
+                  }
                 >
-                  <option value="">All Visibility / Status</option>
-                  {statusOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="h-9 w-34 rounded-md border-border bg-background px-3 text-xs font-semibold text-foreground">
+                    <SelectValue placeholder="All Status" />
+                  </SelectTrigger>
+                  <SelectContent side="bottom" align="start" className="w-32">
+                    <SelectItem value="all">All Status</SelectItem>
+                    {statusOptions.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
 
               {/* Category Select Filter */}
               {showCategoryFilter && onCategoryChange && (
-                <select
+                <Select
                   value={categoryValue}
-                  onChange={(e) => onCategoryChange(e.target.value)}
-                  className="h-9 rounded-md border border-border bg-background px-3 text-xs font-semibold text-foreground focus:outline-none"
+                  onValueChange={(value) =>
+                    onCategoryChange(value === "all" ? "" : (value ?? ""))
+                  }
                 >
-                  <option value="">All Categories</option>
-                  {categoryOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="h-9 w-44 rounded-md border-border bg-background px-3 text-xs font-semibold text-foreground">
+                    <SelectValue placeholder="All Categories" />
+                  </SelectTrigger>
+                  <SelectContent side="bottom" align="start">
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {categoryOptions.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
 
               {/* Date Range Picker */}
@@ -262,7 +282,9 @@ export function GlobalTable<TData>({
                 <DateRange
                   value={dateRangeValue}
                   onChange={onDateRangeChange}
-                  onClear={() => onDateRangeChange({ from: undefined, to: undefined })}
+                  onClear={() =>
+                    onDateRangeChange({ from: undefined, to: undefined })
+                  }
                 />
               )}
             </div>
@@ -281,7 +303,9 @@ export function GlobalTable<TData>({
                   >
                     <div className="flex items-center gap-1.5">
                       {col.header}
-                      {col.sortable && <ArrowUpDown className="h-3 w-3 opacity-60" />}
+                      {col.sortable && (
+                        <ArrowUpDown className="h-3 w-3 opacity-60" />
+                      )}
                     </div>
                   </th>
                 ))}

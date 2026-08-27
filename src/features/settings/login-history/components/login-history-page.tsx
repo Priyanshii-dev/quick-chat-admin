@@ -19,7 +19,8 @@ export function LoginHistoryPage() {
         const matchesName =
           !query ||
           event.user.toLowerCase().includes(query.toLowerCase()) ||
-          (event.email && event.email.toLowerCase().includes(query.toLowerCase()));
+          (event.email &&
+            event.email.toLowerCase().includes(query.toLowerCase()));
         const matchesType = !selectedType || event.type === selectedType;
         return matchesName && matchesType;
       }),
@@ -30,18 +31,24 @@ export function LoginHistoryPage() {
     {
       id: "srNo",
       header: "S.No.",
-      cell: (_event, index) => <span className="font-semibold text-foreground">{index + 1}</span>,
+      cell: (_event, index) => (
+        <span className="font-semibold text-foreground">{index + 1}</span>
+      ),
     },
     {
       id: "user",
       header: "User",
-      cell: (event) => <span className="font-extrabold text-foreground">{event.user}</span>,
+      cell: (event) => (
+        <span className="font-extrabold text-foreground">{event.user}</span>
+      ),
     },
     {
       id: "email",
       header: "Email",
       cell: (event) => (
-        <span className="font-mono text-muted-foreground">{event.email ?? "—"}</span>
+        <span className="font-mono text-muted-foreground">
+          {event.email ?? "—"}
+        </span>
       ),
     },
     {
@@ -56,23 +63,31 @@ export function LoginHistoryPage() {
     {
       id: "ip",
       header: "IP Address",
-      cell: (event) => <span className="font-mono text-xs">{event.ip ?? "—"}</span>,
+      cell: (event) => (
+        <span className="font-mono text-xs">{event.ip ?? "—"}</span>
+      ),
     },
     {
       id: "location",
       header: "Location",
-      cell: (event) => <span className="text-foreground">{event.location ?? "—"}</span>,
+      cell: (event) => (
+        <span className="text-foreground">{event.location ?? "—"}</span>
+      ),
     },
     {
       id: "device",
       header: "Device Info",
-      cell: (event) => <span className="text-muted-foreground">{event.device}</span>,
+      cell: (event) => (
+        <span className="text-muted-foreground">{event.device}</span>
+      ),
     },
     {
       id: "createdAt",
       header: "Date & Time",
       cell: (event) => (
-        <span className="whitespace-nowrap font-medium text-muted-foreground">{event.createdAt}</span>
+        <span className="whitespace-nowrap font-medium text-muted-foreground">
+          {event.createdAt}
+        </span>
       ),
     },
   ];

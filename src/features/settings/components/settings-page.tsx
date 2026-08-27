@@ -23,42 +23,48 @@ import { SettingsPageProps } from "./types/types";
 const settingsCards = [
   {
     title: "General Settings",
-    description: "Manage website identity, email address, contact numbers, address, and bank details",
+    description:
+      "Manage website identity, email address, contact numbers, address, and bank details",
     href: "/settings/general-settings",
     icon: Settings,
     badge: "Core",
   },
   {
     title: "Email Templates",
-    description: "Manage automated email notifications, newsletter layouts, and message designs",
+    description:
+      "Manage automated email notifications, newsletter layouts, and message designs",
     href: "/settings/email-templates",
     icon: Mail,
     badge: "Communication",
   },
   {
     title: "SMTP Configuration",
-    description: "Setup outgoing mail server host, SMTP port, credentials, and send test mail",
+    description:
+      "Setup outgoing mail server host, SMTP port, credentials, and send test mail",
     href: "/settings/smtp-settings",
     icon: Send,
     badge: "Mail Server",
   },
   {
     title: "Logo & Favicon",
-    description: "Upload website main logo, dark mode branding, and browser favicon assets",
+    description:
+      "Upload website main logo, dark mode branding, and browser favicon assets",
     href: "/settings/logo-settings",
     icon: ImageIcon,
     badge: "Branding",
   },
   {
     title: "Social Media Links",
-    description: "Connect Instagram, Facebook, X / Twitter, YouTube, and LinkedIn profile URLs",
+    description:
+      "Connect Instagram, Facebook, X / Twitter, YouTube, and LinkedIn profile URLs",
     href: "/settings/social-media",
     icon: Share2,
     badge: "Social",
   },
   {
     title: "Login History",
-    description: "Review recent administrator login access, IP addresses, and security audit logs",
+    description:
+      "Review recent administrator login access, IP addresses, and security audit logs",
     href: "/settings/login-history",
     icon: ShieldCheck,
     badge: "Security",
@@ -71,7 +77,7 @@ export function SettingsOverview() {
   const filteredCards = settingsCards.filter(
     (card) =>
       card.title.toLowerCase().includes(search.toLowerCase()) ||
-      card.description.toLowerCase().includes(search.toLowerCase())
+      card.description.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
@@ -96,7 +102,8 @@ export function SettingsOverview() {
               System Settings & Configuration
             </h1>
             <p className="text-sm font-medium text-muted-foreground mt-1">
-              Select a configuration module below to manage your website settings.
+              Select a configuration module below to manage your website
+              settings.
             </p>
           </div>
         </div>
@@ -154,10 +161,7 @@ export function SettingsOverview() {
   );
 }
 
-export function SettingsPage({
-  kind,
-  mode = "edit",
-}: SettingsPageProps) {
+export function SettingsPage({ kind, mode = "edit" }: SettingsPageProps) {
   return (
     <div className="w-full">
       {kind === "general" ? <GeneralSettingsForm mode={mode} /> : null}

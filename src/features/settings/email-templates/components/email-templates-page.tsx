@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Mail, Plus, Laptop, Smartphone, Code2, Send } from "lucide-react";
-import { GlobalTable, TableColumn } from "@/components/table/global-table";
+import { GlobalTable } from "@/components/table/global-table";
 import { ConfirmationDialog } from "@/components/shared/confirmation-dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,14 +31,10 @@ const staticEmailTemplates: EmailTemplate[] = [
 ];
 
 export function EmailTemplatesPage() {
-  const router = useRouter();
   const { data, isLoading } = useEmailTemplates();
   const [query, setQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [deletedIds, setDeletedIds] = useState<string[]>([]);
-  const [editedTemplates, setEditedTemplates] = useState<
-    Record<string, EmailTemplate>
-  >({});
   const [selectedTemplate, setSelectedTemplate] =
     useState<EmailTemplate | null>(null);
   const [content, setContent] = useState(
@@ -54,7 +49,7 @@ export function EmailTemplatesPage() {
   const baseRows = data?.items?.length ? data.items : staticEmailTemplates;
   const rows = baseRows
     .filter((template) => !deletedIds.includes(template.id))
-    .map((template) => editedTemplates[template.id] ?? template);
+    .map((template) => template);
 
   const filteredRows = useMemo(() => {
     const normalizedQuery = query.toLowerCase();
@@ -65,43 +60,28 @@ export function EmailTemplatesPage() {
         .includes(normalizedQuery);
       return (
         matchesQuery &&
-        (!selectedStatus || template.status.toLowerCase() === selectedStatus.toLowerCase())
+        (!selectedStatus ||
+          template.status.toLowerCase() === selectedStatus.toLowerCase())
       );
     });
   }, [query, rows, selectedStatus]);
 
-  const columns: TableColumn<EmailTemplate>[] = [
-    {
-      id: "name",
-      header: "Template Name",
-      cell: (row) => <span className="font-extrabold text-foreground">{row.name}</span>,
+  const columns = getEmailTemplateColumns({
+    onView: (template) => {
+      setSelectedTemplate(template);
+      setDialogMode("view");
     },
-    {
-      id: "from",
-      header: "From Email",
-      cell: (row) => <span className="font-mono text-muted-foreground">{row.from}</span>,
+    onEdit: (template) => {
+      setSelectedTemplate(template);
+      setDialogMode("edit");
     },
-    {
-      id: "subject",
-      header: "Subject Line",
-      cell: (row) => <span className="font-medium text-foreground">{row.subject}</span>,
+    onDelete: setDeleteTarget,
+    onShare: (template) => {
+      toast.success("Template link copied", {
+        description: `${template.name} is ready to share.`,
+      });
     },
-    {
-      id: "status",
-      header: "Status",
-      cell: (row) => (
-        <span
-          className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-            row.status === "Active"
-              ? "bg-emerald-500/10 text-emerald-600"
-              : "bg-amber-500/10 text-amber-600"
-          }`}
-        >
-          {row.status}
-        </span>
-      ),
-    },
-  ];
+  });
 
   const statusOptions = [
     { label: "Active", value: "active" },
@@ -171,7 +151,9 @@ export function EmailTemplatesPage() {
                   aria-label="Desktop preview"
                   onClick={() => setPreviewMode("desktop")}
                   className={`flex items-center gap-1.5 rounded-md px-2 py-1 ${
-                    previewMode === "desktop" ? "bg-card text-foreground font-bold" : ""
+                    previewMode === "desktop"
+                      ? "bg-card text-foreground font-bold"
+                      : ""
                   }`}
                 >
                   <Laptop size={14} /> Desktop
@@ -181,7 +163,9 @@ export function EmailTemplatesPage() {
                   aria-label="Mobile preview"
                   onClick={() => setPreviewMode("mobile")}
                   className={`flex items-center gap-1.5 rounded-md px-2 py-1 ${
-                    previewMode === "mobile" ? "bg-card text-foreground font-bold" : ""
+                    previewMode === "mobile"
+                      ? "bg-card text-foreground font-bold"
+                      : ""
                   }`}
                 >
                   <Smartphone size={14} /> Mobile
@@ -191,7 +175,9 @@ export function EmailTemplatesPage() {
                   aria-label="HTML preview"
                   onClick={() => setPreviewMode("html")}
                   className={`flex items-center gap-1.5 rounded-md px-2 py-1 ${
-                    previewMode === "html" ? "bg-card text-foreground font-bold" : ""
+                    previewMode === "html"
+                      ? "bg-card text-foreground font-bold"
+                      : ""
                   }`}
                 >
                   <Code2 size={14} /> HTML
@@ -203,7 +189,9 @@ export function EmailTemplatesPage() {
             <div className="grid gap-0">
               <div className="border-b border-border px-5 py-4 text-xs">
                 <span className="mr-3 text-muted-foreground">Subject:</span>
-                <strong className="text-foreground">{selectedTemplate.subject}</strong>
+                <strong className="text-foreground">
+                  {selectedTemplate.subject}
+                </strong>
               </div>
               <div className="flex min-h-[360px] justify-center p-6 max-[680px]:p-4 bg-muted/20">
                 {previewMode === "html" ? (
@@ -216,7 +204,9 @@ export function EmailTemplatesPage() {
                     readOnly={dialogMode !== "edit"}
                     onChange={(event) => setContent(event.target.value)}
                     className={`h-[300px] resize-none rounded-xl border-border bg-background p-5 text-xs shadow-sm ${
-                      previewMode === "mobile" ? "w-[360px] max-w-full" : "w-full"
+                      previewMode === "mobile"
+                        ? "w-[360px] max-w-full"
+                        : "w-full"
                     }`}
                   />
                 )}

@@ -88,7 +88,9 @@ export function ModulePage({ title, eyebrow, description, kind }: ModuleProps) {
                 key={row}
               >
                 <div>
-                  <strong className="mb-1 block font-bold text-foreground">{row}</strong>
+                  <strong className="mb-1 block font-bold text-foreground">
+                    {row}
+                  </strong>
                   <span className="text-xs text-muted-foreground">
                     {kind === "subscribers"
                       ? `${[248, 12, 8][index]} records`

@@ -71,14 +71,14 @@ export function TableToolbar({
           <DateRange
             value={dateRangeValue}
             onChange={onDateRangeChange}
-            onClear={() => onDateRangeChange({ from: undefined, to: undefined })}
+            onClear={() =>
+              onDateRangeChange({ from: undefined, to: undefined })
+            }
           />
         )}
       </div>
 
-      {children && (
-        <div className="flex items-center gap-2">{children}</div>
-      )}
+      {children && <div className="flex items-center gap-2">{children}</div>}
     </div>
   );
 }

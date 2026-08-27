@@ -87,10 +87,13 @@ export function TablePageHeader({
           </Button>
         )}
 
-        {primaryAction && (
-          primaryAction.href ? (
+        {primaryAction &&
+          (primaryAction.href ? (
             <Link href={primaryAction.href}>
-              <Button size="sm" className="gap-2 bg-primary text-primary-foreground font-semibold hover:opacity-90">
+              <Button
+                size="sm"
+                className="gap-2 bg-primary text-primary-foreground font-semibold hover:opacity-90"
+              >
                 {primaryAction.icon || <Plus className="h-4 w-4" />}
                 {primaryAction.label}
               </Button>
@@ -104,8 +107,7 @@ export function TablePageHeader({
               {primaryAction.icon || <Plus className="h-4 w-4" />}
               {primaryAction.label}
             </Button>
-          )
-        )}
+          ))}
       </div>
     </div>
   );

@@ -64,7 +64,11 @@ export function Header() {
         </div>
 
         {/* Notifications */}
-        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground"
+        >
           <Bell className="h-4 w-4" />
         </Button>
 
@@ -74,8 +78,12 @@ export function Header() {
             QC
           </div>
           <div className="hidden sm:block text-left">
-            <div className="text-xs font-bold text-foreground">Admin Workspace</div>
-            <div className="text-[10px] text-muted-foreground">admin@quietchat.in</div>
+            <div className="text-xs font-bold text-foreground">
+              Admin Workspace
+            </div>
+            <div className="text-[10px] text-muted-foreground">
+              admin@quietchat.in
+            </div>
           </div>
         </div>
       </div>

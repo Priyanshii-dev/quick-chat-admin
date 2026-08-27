@@ -26,7 +26,11 @@ export function CustomFormField({
       </label>
       {children}
       {error ? (
-        <small id={errorId} role="alert" className="text-xs font-semibold text-destructive mt-0.5">
+        <small
+          id={errorId}
+          role="alert"
+          className="text-xs font-semibold text-destructive mt-0.5"
+        >
           {error}
         </small>
       ) : null}

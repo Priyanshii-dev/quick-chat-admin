@@ -3,13 +3,18 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { blogCategorySchema, BlogCategoryFormValues } from "../schema/blog.schema";
+import {
+  blogCategorySchema,
+  BlogCategoryFormValues,
+} from "../schema/blog.schema";
 import { blogService } from "../services/blog.service";
 import { BlogCategory } from "../types/types";
 import { getCategoryColumns } from "./category-columns";
 import { GlobalTable } from "@/components/table/global-table";
+import { DateRangeValue } from "@/components/table/date-range";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ImageUploadDropzone } from "@/components/shared/image-upload-dropzone";
 import { toast } from "sonner";
 import { Folder, Plus, X } from "lucide-react";
 
@@ -17,14 +22,19 @@ export function CategoryTable() {
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [dateRange, setDateRange] = useState<DateRangeValue>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<BlogCategory | null>(null);
+  const [editingCategory, setEditingCategory] = useState<BlogCategory | null>(
+    null,
+  );
 
   const {
     register,
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<BlogCategoryFormValues>({
     resolver: zodResolver(blogCategorySchema),
@@ -53,10 +63,12 @@ export function CategoryTable() {
         name: cat.name,
         slug: cat.slug,
         description: cat.description || "",
+        iconUrl: cat.iconUrl || "",
+        imageUrl: cat.imageUrl || "",
       });
     } else {
       setEditingCategory(null);
-      reset({ name: "", slug: "", description: "" });
+      reset({ name: "", slug: "", description: "", iconUrl: "", imageUrl: "" });
     }
     setIsModalOpen(true);
   };
@@ -65,7 +77,15 @@ export function CategoryTable() {
     try {
       if (editingCategory) {
         setCategories((prev) =>
-          prev.map((c) => (c.id === editingCategory.id ? { ...c, ...data } : c))
+          prev.map((c) =>
+            c.id === editingCategory.id
+              ? {
+                  ...c,
+                  ...data,
+                  updatedAt: new Date().toISOString().split("T")[0],
+                }
+              : c,
+          ),
         );
         toast.success("Category updated!");
       } else {
@@ -74,6 +94,8 @@ export function CategoryTable() {
           ...data,
           blogCount: 0,
           createdAt: new Date().toISOString().split("T")[0],
+          updatedAt: new Date().toISOString().split("T")[0],
+          status: "Active",
         };
         setCategories((prev) => [newCat, ...prev]);
         toast.success("Category added!");
@@ -89,12 +111,19 @@ export function CategoryTable() {
     toast.success("Category removed!");
   };
 
-  const filteredCategories = categories.filter(
-    (c) =>
+  const filteredCategories = categories.filter((c) => {
+    const normalizedSearch = searchQuery.toLowerCase();
+    const updatedDate = c.updatedAt || c.createdAt || "";
+    const matchesSearch =
       !searchQuery ||
-      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.slug.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+      c.name.toLowerCase().includes(normalizedSearch) ||
+      c.slug.toLowerCase().includes(normalizedSearch);
+    const matchesStatus = !statusFilter || c.status === statusFilter;
+    const matchesFromDate = !dateRange.from || updatedDate >= dateRange.from;
+    const matchesToDate = !dateRange.to || updatedDate <= dateRange.to;
+
+    return matchesSearch && matchesStatus && matchesFromDate && matchesToDate;
+  });
 
   const columns = getCategoryColumns(handleOpenModal, handleDelete);
 
@@ -109,6 +138,16 @@ export function CategoryTable() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searchPlaceholder="Search category name..."
+        showStatusFilter={true}
+        statusValue={statusFilter}
+        onStatusChange={setStatusFilter}
+        statusOptions={[
+          { label: "Active", value: "Active" },
+          { label: "Inactive", value: "Inactive" },
+        ]}
+        showDateRange={true}
+        dateRangeValue={dateRange}
+        onDateRangeChange={setDateRange}
         primaryAction={{
           label: "Add Category",
           onClick: () => handleOpenModal(),
@@ -161,8 +200,25 @@ export function CategoryTable() {
                   className="bg-background text-xs h-10 rounded-md border-border"
                 />
                 {errors.name && (
-                  <p className="text-xs text-destructive">{errors.name.message}</p>
+                  <p className="text-xs text-destructive">
+                    {errors.name.message}
+                  </p>
                 )}
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <ImageUploadDropzone
+                  label="Category Icon"
+                  acceptText="Upload Icon (PNG, SVG)"
+                  value={watch("iconUrl")}
+                  onChange={(url) => setValue("iconUrl", url)}
+                />
+                <ImageUploadDropzone
+                  label="Category Image"
+                  acceptText="Upload Image (JPG, PNG)"
+                  value={watch("imageUrl")}
+                  onChange={(url) => setValue("imageUrl", url)}
+                />
               </div>
 
               <div className="space-y-1.5">
@@ -175,7 +231,9 @@ export function CategoryTable() {
                   className="bg-background font-mono text-xs h-10 rounded-md border-border"
                 />
                 {errors.slug && (
-                  <p className="text-xs text-destructive">{errors.slug.message}</p>
+                  <p className="text-xs text-destructive">
+                    {errors.slug.message}
+                  </p>
                 )}
               </div>
 

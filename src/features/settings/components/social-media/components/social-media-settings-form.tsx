@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import { Facebook, Instagram, Linkedin, Twitter, Save, Share2 } from "lucide-react";
+import {
+  Facebook,
+  Instagram,
+  Linkedin,
+  Twitter,
+  Save,
+  Share2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FormInput } from "@/components/shared/custom-input-text";
 import { ModuleHeader } from "@/components/shared/module-header";
@@ -42,7 +49,9 @@ export function SocialMediaSettingsForm({
                 control={control}
                 type="url"
                 placeholder="https://instagram.com/your-profile"
-                startAdornment={<Instagram className="h-4 w-4 text-primary shrink-0" />}
+                startAdornment={
+                  <Instagram className="h-4 w-4 text-primary shrink-0" />
+                }
                 inputWrapperClassName="flex items-center gap-2.5"
               />
               <FormInput
@@ -51,7 +60,9 @@ export function SocialMediaSettingsForm({
                 control={control}
                 type="url"
                 placeholder="https://facebook.com/your-page"
-                startAdornment={<Facebook className="h-4 w-4 text-primary shrink-0" />}
+                startAdornment={
+                  <Facebook className="h-4 w-4 text-primary shrink-0" />
+                }
                 inputWrapperClassName="flex items-center gap-2.5"
               />
               <FormInput
@@ -60,7 +71,9 @@ export function SocialMediaSettingsForm({
                 control={control}
                 type="url"
                 placeholder="https://twitter.com/your-profile"
-                startAdornment={<Twitter className="h-4 w-4 text-primary shrink-0" />}
+                startAdornment={
+                  <Twitter className="h-4 w-4 text-primary shrink-0" />
+                }
                 inputWrapperClassName="flex items-center gap-2.5"
               />
               <FormInput
@@ -69,7 +82,9 @@ export function SocialMediaSettingsForm({
                 control={control}
                 type="url"
                 placeholder="https://linkedin.com/company/your-company"
-                startAdornment={<Linkedin className="h-4 w-4 text-primary shrink-0" />}
+                startAdornment={
+                  <Linkedin className="h-4 w-4 text-primary shrink-0" />
+                }
                 inputWrapperClassName="flex items-center gap-2.5"
               />
             </div>

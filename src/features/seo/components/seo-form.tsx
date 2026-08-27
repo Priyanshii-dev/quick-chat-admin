@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { seoSchema, SeoFormValues } from "../schema/seo.schema";
 import { seoService } from "../services/seo.service";
 import { FormCardLayout } from "@/components/shared/form-card-layout";
-import { SearchableSelect } from "@/components/ui/searchable-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,35 +20,19 @@ export function SeoForm() {
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors },
   } = useForm<SeoFormValues>({
     resolver: zodResolver(seoSchema),
     defaultValues: {
-      pageUrl: "/",
       metaTitle: "",
       metaDescription: "",
+      metaTags: "",
       keywords: "",
-      robots: "index, follow",
-      status: "Active",
+      canonicalUrl: "",
+      ogUrl: "",
+      metadata: "",
     },
   });
-
-  const robotsValue = watch("robots");
-  const statusValue = watch("status");
-
-  const robotsOptions = [
-    { label: "index, follow (Recommended)", value: "index, follow" },
-    { label: "noindex, follow", value: "noindex, follow" },
-    { label: "noindex, nofollow", value: "noindex, nofollow" },
-  ];
-
-  const statusOptions = [
-    { label: "Active", value: "Active" },
-    { label: "Pending", value: "Pending" },
-    { label: "Draft", value: "Draft" },
-  ];
 
   const onSubmit = async (data: SeoFormValues) => {
     try {
@@ -57,7 +40,7 @@ export function SeoForm() {
       await seoService.createSeo(data);
       toast.success("SEO details saved successfully!");
       router.push("/seo");
-    } catch (err) {
+    } catch {
       toast.error("Failed to save SEO record");
     } finally {
       setSubmitting(false);
@@ -97,25 +80,10 @@ export function SeoForm() {
       }
     >
       <div className="grid gap-5 md:grid-cols-2">
-        {/* Page URL */}
+        {/* SEO Title */}
         <div className="space-y-1.5 md:col-span-2">
           <label className="text-xs font-bold text-foreground">
-            PAGE ROUTE / PATH <span className="text-destructive">*</span>
-          </label>
-          <Input
-            {...register("pageUrl")}
-            placeholder="e.g. /about-us or /blog/my-article"
-            className="bg-background font-mono text-xs h-10 rounded-md border-border"
-          />
-          {errors.pageUrl && (
-            <p className="text-xs text-destructive">{errors.pageUrl.message}</p>
-          )}
-        </div>
-
-        {/* Meta Title */}
-        <div className="space-y-1.5 md:col-span-2">
-          <label className="text-xs font-bold text-foreground">
-            META TITLE TAG <span className="text-destructive">*</span>
+            SEO TITLE <span className="text-destructive">*</span>
           </label>
           <Input
             {...register("metaTitle")}
@@ -123,14 +91,16 @@ export function SeoForm() {
             className="bg-background text-xs h-10 rounded-md border-border"
           />
           {errors.metaTitle && (
-            <p className="text-xs text-destructive">{errors.metaTitle.message}</p>
+            <p className="text-xs text-destructive">
+              {errors.metaTitle.message}
+            </p>
           )}
         </div>
 
-        {/* Meta Description */}
+        {/* SEO Description */}
         <div className="space-y-1.5 md:col-span-2">
           <label className="text-xs font-bold text-foreground">
-            META DESCRIPTION <span className="text-destructive">*</span>
+            SEO DESCRIPTION <span className="text-destructive">*</span>
           </label>
           <Textarea
             {...register("metaDescription")}
@@ -145,10 +115,22 @@ export function SeoForm() {
           )}
         </div>
 
+        {/* Meta Tags */}
+        <div className="space-y-1.5 md:col-span-2">
+          <label className="text-xs font-bold text-foreground">
+            SEO META TAGS
+          </label>
+          <Input
+            {...register("metaTags")}
+            placeholder="keywords, tag1, tag2"
+            className="bg-background text-xs h-10 rounded-md border-border"
+          />
+        </div>
+
         {/* Keywords */}
         <div className="space-y-1.5 md:col-span-2">
           <label className="text-xs font-bold text-foreground">
-            FOCUS KEYWORDS (COMMA SEPARATED)
+            SEO KEYWORDS
           </label>
           <Input
             {...register("keywords")}
@@ -157,27 +139,38 @@ export function SeoForm() {
           />
         </div>
 
-        {/* Robots Searchable Select */}
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-foreground">ROBOTS DIRECTIVES</label>
-          <SearchableSelect
-            options={robotsOptions}
-            value={robotsValue || "index, follow"}
-            onChange={(val) => setValue("robots", val)}
-            placeholder="Select robots policy..."
+          <label className="text-xs font-bold text-foreground">
+            CANONICAL URL
+          </label>
+          <Input
+            {...register("canonicalUrl")}
+            placeholder="https://example.com/blog/slug"
+            className="bg-background text-xs h-10 rounded-md border-border"
           />
         </div>
 
-        {/* Status Searchable Select */}
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-foreground">RECORD STATUS</label>
-          <SearchableSelect
-            options={statusOptions}
-            value={statusValue || "Active"}
-            onChange={(val) => setValue("status", val as any)}
-            placeholder="Select status..."
+          <label className="text-xs font-bold text-foreground">OG URL</label>
+          <Input
+            {...register("ogUrl")}
+            placeholder="https://example.com/og-image.png"
+            className="bg-background text-xs h-10 rounded-md border-border"
           />
         </div>
+
+        <div className="space-y-1.5 md:col-span-2">
+          <label className="text-xs font-bold text-foreground">METADATA</label>
+          <Textarea
+            {...register("metadata")}
+            placeholder={
+              'Optional JSON (example): {"canonical":"https://...","og_title":"..."}'
+            }
+            rows={3}
+            className="bg-background text-xs rounded-md border-border"
+          />
+        </div>
+
       </div>
     </FormCardLayout>
   );

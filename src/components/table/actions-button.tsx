@@ -11,6 +11,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ConfirmationDialog } from "@/components/shared/confirmation-dialog";
 
 export interface ActionOption {
   label: string;
@@ -44,11 +45,12 @@ export function ActionsButton({
   disabled = false,
 }: ActionsButtonProps) {
   const [open, setOpen] = useState(false);
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
 
   const handleAction = async (
     actionFn?: () => void | Promise<void>,
-    actionName: string = "action"
+    actionName: string = "action",
   ) => {
     if (!actionFn) return;
     try {
@@ -61,7 +63,9 @@ export function ActionsButton({
   };
 
   const activeStatus =
-    typeof status === "boolean" ? status : status === "active" || status === "published";
+    typeof status === "boolean"
+      ? status
+      : status === "active" || status === "published";
 
   return (
     <div className="relative inline-block text-left">
@@ -83,10 +87,7 @@ export function ActionsButton({
       {open && (
         <>
           {/* Backdrop overlay to close menu */}
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setOpen(false)}
-          />
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
 
           <div className="absolute right-0 z-50 mt-1 w-44 origin-top-right rounded-lg border border-border bg-card p-1.5 shadow-xl ring-1 ring-black/5 animate-in fade-in-50 zoom-in-95">
             {onView && (
@@ -133,7 +134,10 @@ export function ActionsButton({
 
             {/* Render condition-based custom actions */}
             {customActions
-              .filter((action) => action.condition === undefined || action.condition === true)
+              .filter(
+                (action) =>
+                  action.condition === undefined || action.condition === true,
+              )
               .map((action, idx) => (
                 <button
                   key={idx}
@@ -156,11 +160,8 @@ export function ActionsButton({
                 <button
                   type="button"
                   onClick={() => {
-                    if (window.confirm("Are you sure you want to delete this item?")) {
-                      handleAction(onDelete, "delete");
-                    } else {
-                      setOpen(false);
-                    }
+                    setOpen(false);
+                    setDeleteConfirmationOpen(true);
                   }}
                   className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors"
                 >
@@ -172,6 +173,14 @@ export function ActionsButton({
           </div>
         </>
       )}
+      <ConfirmationDialog
+        open={deleteConfirmationOpen}
+        onOpenChange={setDeleteConfirmationOpen}
+        onConfirm={() => {
+          setDeleteConfirmationOpen(false);
+          handleAction(onDelete, "delete");
+        }}
+      />
     </div>
   );
 }

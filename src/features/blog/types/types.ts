@@ -1,5 +1,10 @@
 export type BlogStatus = "Published" | "Draft" | "Archived";
 
+export interface BlogFAQ {
+  question: string;
+  answer: string;
+}
+
 export interface BlogCategory {
   id: string;
   name: string;
@@ -7,6 +12,10 @@ export interface BlogCategory {
   description?: string;
   blogCount?: number;
   createdAt?: string;
+  updatedAt?: string;
+  iconUrl?: string;
+  imageUrl?: string;
+  status?: "Active" | "Inactive";
 }
 
 export interface BlogPost {
@@ -20,9 +29,17 @@ export interface BlogPost {
   categoryId?: string;
   status: BlogStatus;
   imageUrl?: string;
+  authorProfileUrl?: string;
+  doctorId?: string;
+  tag?: string;
+  publishedAt?: string;
+  dynamicBlocks?: string[];
+  faqs?: BlogFAQ[];
   updatedAt: string;
   createdAt?: string;
   views: number;
+  engagement?: number;
+  date?: string;
   readTime?: string;
 }
 

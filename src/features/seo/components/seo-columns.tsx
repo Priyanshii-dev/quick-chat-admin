@@ -3,76 +3,84 @@
 import { TableColumn } from "@/components/table/global-table";
 import { SeoMeta } from "../types/seo.types";
 import { ActionsButton } from "@/components/table/actions-button";
-import { Globe } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 export const getSeoColumns = (
   onEdit: (seo: SeoMeta) => void,
-  onDelete: (id: string) => void
+  onDelete: (id: string) => void,
 ): TableColumn<SeoMeta>[] => [
   {
-    accessorKey: "pageUrl",
-    header: "Page URL Path",
-    cell: (seo) => (
-      <div className="flex items-center gap-2 py-1 font-mono text-xs font-semibold text-primary">
-        <Globe className="h-3.5 w-3.5" />
-        <span>{seo.pageUrl}</span>
-      </div>
-    ),
+    id: "srNo",
+    header: "Sr No",
+    cell: (_seo, index) => <span className="font-medium">{index + 1}</span>,
+  },
+  {
+    accessorKey: "pageName",
+    header: "Page Name",
+    sortable: true,
+    cell: (seo) => <span className="font-medium">{seo.pageName}</span>,
   },
   {
     accessorKey: "metaTitle",
-    header: "Meta Title",
-    cell: (seo) => (
-      <div className="max-w-xs">
-        <span className="font-semibold text-foreground line-clamp-1">
-          {seo.metaTitle}
-        </span>
-      </div>
-    ),
+    header: "Title",
+    sortable: true,
+    cell: (seo) => <span>{seo.metaTitle}</span>,
   },
   {
-    accessorKey: "metaDescription",
-    header: "Meta Description",
-    cell: (seo) => (
-      <span className="text-muted-foreground line-clamp-1 max-w-sm">
-        {seo.metaDescription}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
+    id: "url",
+    header: "URL",
+    sortable: true,
     cell: (seo) => {
-      const status = seo.status;
+      const seoUrl = seo.pageUrl;
+      const canonicalUrl = seo.canonicalUrl || seo.pageUrl;
+
       return (
-        <span
-          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border ${
-            status === "Active"
-              ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-              : "bg-amber-500/10 text-amber-500 border-amber-500/20"
-          }`}
-        >
-          <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-current" />
-          {status}
-        </span>
+        <div className="space-y-2">
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground">
+              SEO URL
+            </p>
+            <a
+              href={seoUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1 text-primary"
+            >
+              {seoUrl}
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-muted-foreground">
+              CANONICAL URL
+            </p>
+            <a
+              href={canonicalUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1 text-primary"
+            >
+              {canonicalUrl}
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          </div>
+        </div>
       );
     },
   },
   {
-    accessorKey: "updatedAt",
-    header: "Last Modified",
+    id: "slug",
+    header: "slug",
+    sortable: true,
     cell: (seo) => (
-      <span className="text-muted-foreground">{seo.updatedAt}</span>
+      <span>{seo.pageUrl.split("/").filter(Boolean).pop() || "/"}</span>
     ),
   },
   {
     id: "actions",
     header: "Actions",
     cell: (seo) => (
-      <ActionsButton
-        onEdit={() => onEdit(seo)}
-        onDelete={() => onDelete(seo.id)}
-      />
+      <ActionsButton onEdit={() => onEdit(seo)} onDelete={() => onDelete(seo.id)} />
     ),
   },
 ];

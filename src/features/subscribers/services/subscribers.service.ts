@@ -1,10 +1,34 @@
 import { Subscriber } from "../types/subscribers.types";
 
 const mockSubscribers: Subscriber[] = [
-  { id: "1", email: "priya.sharma@gmail.com", source: "Landing Page Hero", status: "Subscribed", subscribedAt: "2026-08-27" },
-  { id: "2", email: "rohit.verma@yahoo.com", source: "Blog Sidebar", status: "Subscribed", subscribedAt: "2026-08-25" },
-  { id: "3", email: "contact@company.org", source: "Footer Form", status: "Subscribed", subscribedAt: "2026-08-22" },
-  { id: "4", email: "dev.user@test.io", source: "Popup Banner", status: "Unsubscribed", subscribedAt: "2026-08-10" },
+  {
+    id: "1",
+    email: "priya.sharma@gmail.com",
+    source: "Landing Page Hero",
+    status: "Subscribed",
+    subscribedAt: "2026-08-27",
+  },
+  {
+    id: "2",
+    email: "rohit.verma@yahoo.com",
+    source: "Blog Sidebar",
+    status: "Subscribed",
+    subscribedAt: "2026-08-25",
+  },
+  {
+    id: "3",
+    email: "contact@company.org",
+    source: "Footer Form",
+    status: "Subscribed",
+    subscribedAt: "2026-08-22",
+  },
+  {
+    id: "4",
+    email: "dev.user@test.io",
+    source: "Popup Banner",
+    status: "Unsubscribed",
+    subscribedAt: "2026-08-10",
+  },
 ];
 
 export const subscribersService = {

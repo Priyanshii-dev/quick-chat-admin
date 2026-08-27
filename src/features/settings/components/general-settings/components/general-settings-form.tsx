@@ -219,7 +219,9 @@ export function GeneralSettingsForm({
               className="gap-2 bg-primary text-primary-foreground font-bold h-11 px-8 hover:opacity-90 shadow-md text-sm"
             >
               <Save className="h-4 w-4" />
-              {isSubmitting ? "Saving General Settings..." : "Save General Settings"}
+              {isSubmitting
+                ? "Saving General Settings..."
+                : "Save General Settings"}
             </Button>
           </div>
         )}

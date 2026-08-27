@@ -11,9 +11,7 @@ import { FormMode } from "@/components/shared/form-mode";
 
 type SmtpSettingsFormProps = { mode?: FormMode; onDelete?: () => void };
 
-export function SmtpSettingsForm({
-  mode = "edit",
-}: SmtpSettingsFormProps) {
+export function SmtpSettingsForm({ mode = "edit" }: SmtpSettingsFormProps) {
   const router = useRouter();
   const {
     control,
@@ -191,7 +189,10 @@ export function SmtpSettingsForm({
                 </h3>
               </div>
               <div className="flex min-h-[220px] items-center justify-center rounded-xl border border-border/60 bg-muted/20 p-6 text-center text-xs text-muted-foreground">
-                <p>Click &quot;Send Test Email&quot; to verify your SMTP configuration.</p>
+                <p>
+                  Click &quot;Send Test Email&quot; to verify your SMTP
+                  configuration.
+                </p>
               </div>
             </div>
           </section>

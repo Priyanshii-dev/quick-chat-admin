@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "ckeditor5/ckeditor5.css";
 
 @custom-variant dark (&:is(.dark *));
 @custom-variant quietchat (&:is(.theme-quietchat *));
@@ -188,7 +189,11 @@
   }
   body {
     @apply m-0 bg-background text-foreground transition-colors duration-200;
-    font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+    font-family:
+      var(--font-sans),
+      system-ui,
+      -apple-system,
+      sans-serif;
   }
   button,
   input,
@@ -208,4 +213,8 @@
     box-shadow: none !important;
     border-color: var(--primary) !important;
   }
+}
+
+.ck-editor-field .ck-editor__editable_inline {
+  min-height: var(--ck-editor-min-height);
 }

@@ -11,7 +11,8 @@ const mockHeroBanners: HeroBanner[] = [
     primaryCtaLink: "https://play.google.com",
     secondaryCtaText: "DOWNLOAD FOR iOS / Web App",
     secondaryCtaLink: "https://quietchat.in",
-    imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800",
+    imageUrl:
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800",
     isActive: true,
     updatedAt: "2026-08-27",
   },

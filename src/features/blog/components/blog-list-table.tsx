@@ -53,7 +53,7 @@ export function BlogListTable() {
   const handleToggleStatus = async (blog: BlogPost) => {
     const newStatus = blog.status === "Published" ? "Draft" : "Published";
     setBlogs((prev) =>
-      prev.map((b) => (b.id === blog.id ? { ...b, status: newStatus } : b))
+      prev.map((b) => (b.id === blog.id ? { ...b, status: newStatus } : b)),
     );
     toast.success(`Status updated to ${newStatus}`);
   };

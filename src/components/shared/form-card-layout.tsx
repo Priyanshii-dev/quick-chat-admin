@@ -56,8 +56,8 @@ export function FormCardLayout({
             </div>
           </div>
 
-          {(backHref || onBack) && (
-            backHref ? (
+          {(backHref || onBack) &&
+            (backHref ? (
               <Link href={backHref}>
                 <Button
                   type="button"
@@ -80,8 +80,7 @@ export function FormCardLayout({
                 <ArrowLeft className="h-3.5 w-3.5" />
                 Back
               </Button>
-            )
-          )}
+            ))}
         </div>
 
         {/* Form Body */}

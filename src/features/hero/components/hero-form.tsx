@@ -111,13 +111,16 @@ export function HeroForm() {
                 className="bg-background text-sm font-bold"
               />
               {errors.heading && (
-                <p className="text-xs text-destructive">{errors.heading.message}</p>
+                <p className="text-xs text-destructive">
+                  {errors.heading.message}
+                </p>
               )}
             </div>
 
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-wider text-foreground">
-                Subheading Description <span className="text-destructive">*</span>
+                Subheading Description{" "}
+                <span className="text-destructive">*</span>
               </label>
               <Textarea
                 {...register("subheading")}
@@ -126,14 +129,17 @@ export function HeroForm() {
                 className="bg-background text-sm"
               />
               {errors.subheading && (
-                <p className="text-xs text-destructive">{errors.subheading.message}</p>
+                <p className="text-xs text-destructive">
+                  {errors.subheading.message}
+                </p>
               )}
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-foreground">
-                  Primary Button Text <span className="text-destructive">*</span>
+                  Primary Button Text{" "}
+                  <span className="text-destructive">*</span>
                 </label>
                 <Input
                   {...register("primaryCtaText")}
@@ -144,7 +150,8 @@ export function HeroForm() {
 
               <div className="space-y-1.5">
                 <label className="text-xs font-bold uppercase tracking-wider text-foreground">
-                  Primary Button Link <span className="text-destructive">*</span>
+                  Primary Button Link{" "}
+                  <span className="text-destructive">*</span>
                 </label>
                 <Input
                   {...register("primaryCtaLink")}
@@ -185,7 +192,10 @@ export function HeroForm() {
                 {...register("isActive")}
                 className="h-4 w-4 rounded border-border text-primary focus:ring-primary"
               />
-              <label htmlFor="isActive" className="text-xs font-semibold text-foreground cursor-pointer">
+              <label
+                htmlFor="isActive"
+                className="text-xs font-semibold text-foreground cursor-pointer"
+              >
                 Publish Hero Section live on website
               </label>
             </div>
@@ -250,7 +260,8 @@ export function HeroForm() {
           </div>
 
           <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-[11px] text-zinc-400 mt-6">
-            💡 Changes saved here reflect instantly on the QuietChat landing page.
+            💡 Changes saved here reflect instantly on the QuietChat landing
+            page.
           </div>
         </div>
       </div>

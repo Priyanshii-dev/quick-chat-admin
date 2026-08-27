@@ -131,7 +131,11 @@ export function Sidebar({ alwaysOpen }: { alwaysOpen?: boolean } = {}) {
           onClick={() => setMobileOpen(!mobileOpen)}
           className="h-10 w-10 border-border bg-card shadow-md text-foreground"
         >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {mobileOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
         </Button>
       </div>
 
@@ -160,9 +164,14 @@ export function Sidebar({ alwaysOpen }: { alwaysOpen?: boolean } = {}) {
           </div>
           <div>
             <div className="text-lg font-extrabold tracking-tight text-foreground flex items-center gap-1.5">
-              QuietChat <span className="text-[11px] uppercase tracking-widest text-primary font-bold">ADMIN</span>
+              QuietChat{" "}
+              <span className="text-[11px] uppercase tracking-widest text-primary font-bold">
+                ADMIN
+              </span>
             </div>
-            <div className="text-xs text-muted-foreground">Module Architecture</div>
+            <div className="text-xs text-muted-foreground">
+              Module Architecture
+            </div>
           </div>
         </Link>
 
@@ -183,7 +192,7 @@ export function Sidebar({ alwaysOpen }: { alwaysOpen?: boolean } = {}) {
                 if (item.subItems) {
                   const isGroupOpen = openGroup === item.label;
                   const isChildActive = item.subItems.some(
-                    (sub) => pathname === sub.href
+                    (sub) => pathname === sub.href,
                   );
 
                   return (
@@ -198,12 +207,16 @@ export function Sidebar({ alwaysOpen }: { alwaysOpen?: boolean } = {}) {
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <Icon className={`h-4.5 w-4.5 ${isChildActive ? "text-primary-foreground font-bold" : "text-primary"}`} />
+                          <Icon
+                            className={`h-4.5 w-4.5 ${isChildActive ? "text-primary-foreground font-bold" : "text-primary"}`}
+                          />
                           <span>{item.label}</span>
                         </div>
                         <ChevronDown
                           className={`h-4 w-4 transition-transform duration-200 ${
-                            isGroupOpen ? "rotate-0 text-primary" : "-rotate-90 opacity-60"
+                            isGroupOpen
+                              ? "rotate-0 text-primary"
+                              : "-rotate-90 opacity-60"
                           }`}
                         />
                       </button>
@@ -225,7 +238,9 @@ export function Sidebar({ alwaysOpen }: { alwaysOpen?: boolean } = {}) {
                                 }`}
                               >
                                 <span>{sub.label}</span>
-                                {isSubActive && <ChevronRight className="h-3.5 w-3.5" />}
+                                {isSubActive && (
+                                  <ChevronRight className="h-3.5 w-3.5" />
+                                )}
                               </Link>
                             );
                           })}
@@ -238,7 +253,8 @@ export function Sidebar({ alwaysOpen }: { alwaysOpen?: boolean } = {}) {
                 // Handle single navigation items (including Settings & Configuration link)
                 const isActive =
                   pathname === item.href ||
-                  (item.href === "/settings" && pathname.startsWith("/settings"));
+                  (item.href === "/settings" &&
+                    pathname.startsWith("/settings"));
 
                 return (
                   <Link

@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const seoSchema = z.object({
-  pageUrl: z.string().min(1, "Page URL path is required (e.g. /about-us)"),
   metaTitle: z
     .string()
     .min(5, "Meta title must be at least 5 characters")
@@ -10,11 +9,11 @@ export const seoSchema = z.object({
     .string()
     .min(10, "Meta description must be at least 10 characters")
     .max(160, "Meta description recommended under 160 characters"),
+  metaTags: z.string().optional(),
   keywords: z.string().optional(),
-  ogImage: z.string().optional(),
-  robots: z.string().optional(),
+  ogUrl: z.string().optional(),
   canonicalUrl: z.string().optional(),
-  status: z.enum(["Active", "Pending", "Draft"]).optional(),
+  metadata: z.string().optional(),
 });
 
 export type SeoFormValues = z.infer<typeof seoSchema>;

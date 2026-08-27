@@ -32,12 +32,15 @@ export function SearchableSelect({
   const selectedOption = options.find((opt) => opt.value === value);
 
   const filteredOptions = options.filter((opt) =>
-    opt.label.toLowerCase().includes(search.toLowerCase())
+    opt.label.toLowerCase().includes(search.toLowerCase()),
   );
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     };
@@ -53,7 +56,11 @@ export function SearchableSelect({
         onClick={() => setOpen((prev) => !prev)}
         className="flex h-10 w-full items-center justify-between rounded-md border border-border bg-background px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted/40 transition-colors"
       >
-        <span className={selectedOption ? "text-foreground" : "text-muted-foreground"}>
+        <span
+          className={
+            selectedOption ? "text-foreground" : "text-muted-foreground"
+          }
+        >
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <ChevronDown className="h-4 w-4 opacity-50" />

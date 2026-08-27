@@ -5,7 +5,7 @@ import { HeroBanner } from "../types/hero.types";
 import { ActionsButton } from "@/components/table/actions-button";
 
 export const getHeroColumns = (
-  onEdit: (hero: HeroBanner) => void
+  onEdit: (hero: HeroBanner) => void,
 ): TableColumn<HeroBanner>[] => [
   {
     accessorKey: "heading",
@@ -17,7 +17,9 @@ export const getHeroColumns = (
             {hero.badgeText}
           </span>
         )}
-        <div className="font-bold text-foreground line-clamp-1">{hero.heading}</div>
+        <div className="font-bold text-foreground line-clamp-1">
+          {hero.heading}
+        </div>
         <div className="text-xs text-muted-foreground line-clamp-1">
           {hero.subheading}
         </div>
@@ -29,9 +31,13 @@ export const getHeroColumns = (
     header: "CTAs",
     cell: (hero) => (
       <div className="flex flex-col gap-1 text-xs">
-        <span className="font-medium text-primary">Primary: {hero.primaryCtaText}</span>
+        <span className="font-medium text-primary">
+          Primary: {hero.primaryCtaText}
+        </span>
         {hero.secondaryCtaText && (
-          <span className="text-muted-foreground">Secondary: {hero.secondaryCtaText}</span>
+          <span className="text-muted-foreground">
+            Secondary: {hero.secondaryCtaText}
+          </span>
         )}
       </div>
     ),

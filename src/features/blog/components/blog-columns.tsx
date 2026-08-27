@@ -8,8 +8,15 @@ import { Eye, FileText } from "lucide-react";
 export const getBlogColumns = (
   onEdit: (blog: BlogPost) => void,
   onDelete: (id: string) => void,
-  onToggleStatus: (blog: BlogPost) => void
+  onToggleStatus: (blog: BlogPost) => void,
 ): TableColumn<BlogPost>[] => [
+  {
+    id: "sno",
+    header: "S.No",
+    cell: (blog, index) => (
+      <span className="font-semibold text-foreground">{index + 1}</span>
+    ),
+  },
   {
     accessorKey: "title",
     header: "Title & Details",
@@ -40,6 +47,15 @@ export const getBlogColumns = (
     ),
   },
   {
+    accessorKey: "description",
+    header: "Description",
+    cell: (blog) => (
+      <span className="text-sm text-muted-foreground line-clamp-2 max-w-xs">
+        {blog.description || "—"}
+      </span>
+    ),
+  },
+  {
     accessorKey: "category",
     header: "Category",
     cell: (blog) => (
@@ -52,7 +68,9 @@ export const getBlogColumns = (
     accessorKey: "author",
     header: "Author",
     cell: (blog) => (
-      <span className="font-medium text-foreground">{blog.author || "Admin"}</span>
+      <span className="font-medium text-foreground">
+        {blog.author || "Admin"}
+      </span>
     ),
   },
   {
@@ -60,7 +78,8 @@ export const getBlogColumns = (
     header: "Status",
     cell: (blog) => {
       const status = blog.status;
-      let badgeStyle = "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
+      let badgeStyle =
+        "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
       if (status === "Draft") {
         badgeStyle = "bg-amber-500/10 text-amber-500 border-amber-500/20";
       } else if (status === "Archived") {
@@ -78,20 +97,22 @@ export const getBlogColumns = (
     },
   },
   {
-    accessorKey: "views",
-    header: "Views",
+    accessorKey: "engagement",
+    header: "Engagement",
     cell: (blog) => (
       <div className="flex items-center gap-1 text-muted-foreground font-medium">
         <Eye className="h-3.5 w-3.5" />
-        <span>{blog.views.toLocaleString()}</span>
+        <span>{(blog.engagement ?? 0).toLocaleString()}</span>
       </div>
     ),
   },
   {
-    accessorKey: "updatedAt",
-    header: "Last Updated",
+    accessorKey: "date",
+    header: "Date",
     cell: (blog) => (
-      <span className="text-muted-foreground">{blog.updatedAt}</span>
+      <span className="text-muted-foreground">
+        {blog.date || blog.updatedAt || "—"}
+      </span>
     ),
   },
   {

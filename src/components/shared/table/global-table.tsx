@@ -122,9 +122,9 @@ export function GlobalTable<TData>({
                   >
                     {column.cell
                       ? column.cell(
-                        row,
-                        (currentPage - 1) * pageSize + rowIndex,
-                      )
+                          row,
+                          (currentPage - 1) * pageSize + rowIndex,
+                        )
                       : column.accessorKey
                         ? String(row[column.accessorKey] ?? "-")
                         : "-"}

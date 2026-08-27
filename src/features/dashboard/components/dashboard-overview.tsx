@@ -95,8 +95,12 @@ export function DashboardOverview() {
         {/* Quick Management Actions */}
         <div className="lg:col-span-7 rounded-xl border border-border bg-card p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between border-b border-border pb-3">
-            <h3 className="text-base font-bold text-foreground">Quick Feature Access</h3>
-            <span className="text-xs text-muted-foreground">Module Shortcuts</span>
+            <h3 className="text-base font-bold text-foreground">
+              Quick Feature Access
+            </h3>
+            <span className="text-xs text-muted-foreground">
+              Module Shortcuts
+            </span>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
@@ -109,8 +113,12 @@ export function DashboardOverview() {
                   <FileText className="h-4 w-4" />
                 </div>
                 <div>
-                  <span className="text-sm font-bold text-foreground group-hover:text-primary">Add New Blog</span>
-                  <p className="text-xs text-muted-foreground">Publish articles & news</p>
+                  <span className="text-sm font-bold text-foreground group-hover:text-primary">
+                    Add New Blog
+                  </span>
+                  <p className="text-xs text-muted-foreground">
+                    Publish articles & news
+                  </p>
                 </div>
               </div>
               <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -125,8 +133,12 @@ export function DashboardOverview() {
                   <Globe className="h-4 w-4" />
                 </div>
                 <div>
-                  <span className="text-sm font-bold text-foreground group-hover:text-primary">Add SEO Config</span>
-                  <p className="text-xs text-muted-foreground">Meta tags & search indexing</p>
+                  <span className="text-sm font-bold text-foreground group-hover:text-primary">
+                    Add SEO Config
+                  </span>
+                  <p className="text-xs text-muted-foreground">
+                    Meta tags & search indexing
+                  </p>
                 </div>
               </div>
               <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -141,8 +153,12 @@ export function DashboardOverview() {
                   <Sparkles className="h-4 w-4" />
                 </div>
                 <div>
-                  <span className="text-sm font-bold text-foreground group-hover:text-primary">Hero Section</span>
-                  <p className="text-xs text-muted-foreground">Main homepage banner</p>
+                  <span className="text-sm font-bold text-foreground group-hover:text-primary">
+                    Hero Section
+                  </span>
+                  <p className="text-xs text-muted-foreground">
+                    Main homepage banner
+                  </p>
                 </div>
               </div>
               <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -157,8 +173,12 @@ export function DashboardOverview() {
                   <MessageSquare className="h-4 w-4" />
                 </div>
                 <div>
-                  <span className="text-sm font-bold text-foreground group-hover:text-primary">Contact Requests</span>
-                  <p className="text-xs text-muted-foreground">User messages & feedback</p>
+                  <span className="text-sm font-bold text-foreground group-hover:text-primary">
+                    Contact Requests
+                  </span>
+                  <p className="text-xs text-muted-foreground">
+                    User messages & feedback
+                  </p>
                 </div>
               </div>
               <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -169,7 +189,9 @@ export function DashboardOverview() {
         {/* Recent Activity Stream */}
         <div className="lg:col-span-5 rounded-xl border border-border bg-card p-6 shadow-sm space-y-4">
           <div className="flex items-center justify-between border-b border-border pb-3">
-            <h3 className="text-base font-bold text-foreground">Recent Activity</h3>
+            <h3 className="text-base font-bold text-foreground">
+              Recent Activity
+            </h3>
             <span className="text-xs text-muted-foreground">Live Feed</span>
           </div>
 
@@ -183,8 +205,12 @@ export function DashboardOverview() {
                   •
                 </div>
                 <div className="flex-1">
-                  <span className="font-semibold text-foreground">{item.title}</span>
-                  <div className="text-[11px] text-muted-foreground mt-0.5">{item.timestamp}</div>
+                  <span className="font-semibold text-foreground">
+                    {item.title}
+                  </span>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">
+                    {item.timestamp}
+                  </div>
                 </div>
               </div>
             ))}

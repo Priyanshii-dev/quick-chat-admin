@@ -7,7 +7,7 @@ import { Mail } from "lucide-react";
 
 export const getContactColumns = (
   onView: (inquiry: ContactInquiry) => void,
-  onDelete: (id: string) => void
+  onDelete: (id: string) => void,
 ): TableColumn<ContactInquiry>[] => [
   {
     accessorKey: "name",
@@ -47,8 +47,10 @@ export const getContactColumns = (
     cell: (item) => {
       const status = item.status;
       let style = "bg-primary/10 text-primary border-primary/20";
-      if (status === "Replied") style = "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
-      if (status === "Closed") style = "bg-muted text-muted-foreground border-border";
+      if (status === "Replied")
+        style = "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
+      if (status === "Closed")
+        style = "bg-muted text-muted-foreground border-border";
 
       return (
         <span

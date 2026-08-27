@@ -15,18 +15,18 @@ export function SeoListTable() {
   const [records, setRecords] = useState<SeoMeta[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const { searchQuery, setSearchQuery, selectedStatus, setSelectedStatus } = useSeoStore();
+  const { searchQuery, setSearchQuery } = useSeoStore();
 
   useEffect(() => {
     fetchSeo();
   }, []);
 
-  const fetchSeo = async () => {
+  async function fetchSeo() {
     try {
       setLoading(true);
       const data = await seoService.getSeoRecords();
       setRecords(data);
-    } catch (err) {
+    } catch {
       toast.error("Failed to load SEO records");
     } finally {
       setLoading(false);
@@ -49,18 +49,10 @@ export function SeoListTable() {
       r.pageUrl.toLowerCase().includes(searchQuery.toLowerCase()) ||
       r.metaTitle.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesStatus = !selectedStatus || r.status === selectedStatus;
-
-    return matchesSearch && matchesStatus;
+    return matchesSearch;
   });
 
   const columns = getSeoColumns(handleEdit, handleDelete);
-
-  const statusOptions = [
-    { label: "Active", value: "Active" },
-    { label: "Pending", value: "Pending" },
-    { label: "Draft", value: "Draft" },
-  ];
 
   return (
     <GlobalTable
@@ -72,10 +64,6 @@ export function SeoListTable() {
       searchQuery={searchQuery}
       onSearchChange={setSearchQuery}
       searchPlaceholder="Search page URL or meta title..."
-      showStatusFilter={true}
-      statusValue={selectedStatus}
-      onStatusChange={setSelectedStatus}
-      statusOptions={statusOptions}
       primaryAction={{
         label: "Add SEO Record",
         href: "/seo/add",

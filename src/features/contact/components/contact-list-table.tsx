@@ -14,7 +14,9 @@ import { Mail, MessageSquare, Send, X } from "lucide-react";
 export function ContactListTable() {
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeInquiry, setActiveInquiry] = useState<ContactInquiry | null>(null);
+  const [activeInquiry, setActiveInquiry] = useState<ContactInquiry | null>(
+    null,
+  );
   const [replyText, setReplyText] = useState("");
   const [sendingReply, setSendingReply] = useState(false);
 
@@ -49,7 +51,9 @@ export function ContactListTable() {
       setSendingReply(true);
       await contactService.updateStatus(activeInquiry.id, "Replied");
       setInquiries((prev) =>
-        prev.map((i) => (i.id === activeInquiry.id ? { ...i, status: "Replied" } : i))
+        prev.map((i) =>
+          i.id === activeInquiry.id ? { ...i, status: "Replied" } : i,
+        ),
       );
       toast.success(`Reply sent to ${activeInquiry.email}!`);
       setActiveInquiry(null);
@@ -113,7 +117,9 @@ export function ContactListTable() {
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
                 <Mail className="h-5 w-5 text-primary" />
-                <h3 className="text-lg font-bold text-foreground">Inquiry Details</h3>
+                <h3 className="text-lg font-bold text-foreground">
+                  Inquiry Details
+                </h3>
               </div>
               <Button
                 variant="ghost"
@@ -128,18 +134,26 @@ export function ContactListTable() {
             <div className="space-y-3 rounded-lg border border-border bg-background p-4 text-xs">
               <div className="flex justify-between">
                 <span className="font-semibold text-foreground">From:</span>
-                <span className="text-muted-foreground">{activeInquiry.name} ({activeInquiry.email})</span>
+                <span className="text-muted-foreground">
+                  {activeInquiry.name} ({activeInquiry.email})
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="font-semibold text-foreground">Subject:</span>
-                <span className="text-primary font-medium">{activeInquiry.subject}</span>
+                <span className="text-primary font-medium">
+                  {activeInquiry.subject}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="font-semibold text-foreground">Date:</span>
-                <span className="text-muted-foreground">{activeInquiry.createdAt}</span>
+                <span className="text-muted-foreground">
+                  {activeInquiry.createdAt}
+                </span>
               </div>
               <div className="border-t border-border pt-2">
-                <span className="font-semibold text-foreground block mb-1">Message:</span>
+                <span className="font-semibold text-foreground block mb-1">
+                  Message:
+                </span>
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
                   {activeInquiry.message}
                 </p>

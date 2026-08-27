@@ -33,7 +33,7 @@ export function GlobalTableFilter({
 
   // Filter groups based on condition
   const visibleGroups = filterGroups.filter(
-    (g) => g.condition === undefined || g.condition === true
+    (g) => g.condition === undefined || g.condition === true,
   );
 
   if (visibleGroups.length === 0) return null;
@@ -50,7 +50,7 @@ export function GlobalTableFilter({
           key={group.id}
           value={selectedFilters[group.id] || ""}
           onChange={(e) => onFilterChange(group.id, e.target.value)}
-          className="rounded-md border border-border bg-card px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary font-medium"
+          className="w-32 rounded-md border border-border bg-card px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary font-medium"
         >
           <option value="">All {group.label}</option>
           {group.options.map((opt) => (
