@@ -10,6 +10,7 @@ import { FormCardLayout } from "@/components/shared/form-card-layout";
 import { ImageUploadDropzone } from "@/components/shared/image-upload-dropzone";
 import { CKEditorField } from "@/components/shared/ck-editor-field";
 import { SearchableSelect } from "@/components/ui/searchable-select";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -168,10 +169,11 @@ export function BlogForm() {
               <Input
                 {...register("title")}
                 placeholder="Enter blog title"
+                aria-invalid={Boolean(errors.title)}
                 className="h-10 text-xs"
               />
               {errors.title && (
-                <p className="text-xs text-destructive">
+                <p className="text-xs text-destructive font-medium">
                   {errors.title.message}
                 </p>
               )}
@@ -184,6 +186,7 @@ export function BlogForm() {
                 <Input
                   {...register("slug")}
                   placeholder="blog-title-slug"
+                  aria-invalid={Boolean(errors.slug)}
                   className="h-10 flex-1 font-mono text-xs"
                 />
                 <Button
@@ -218,12 +221,13 @@ export function BlogForm() {
             </label>
             <CKEditorField
               value={watch("content")}
+              error={Boolean(errors.content)}
               onChange={(value) =>
                 setValue("content", value, { shouldValidate: true })
               }
             />
             {errors.content && (
-              <p className="text-xs text-destructive">
+              <p className="text-xs text-destructive font-medium">
                 {errors.content.message}
               </p>
             )}
@@ -310,6 +314,7 @@ export function BlogForm() {
                           <Input
                             {...register(`faqs.${index}.question`)}
                             placeholder="Enter question"
+                            aria-invalid={Boolean(errors.faqs?.[index]?.question)}
                             className="h-12 text-sm"
                           />
                         </div>
@@ -320,6 +325,7 @@ export function BlogForm() {
                           <Textarea
                             {...register(`faqs.${index}.answer`)}
                             placeholder="Enter answer"
+                            aria-invalid={Boolean(errors.faqs?.[index]?.answer)}
                             rows={5}
                             className="text-sm"
                           />
@@ -356,9 +362,15 @@ export function BlogForm() {
             label="Featured Image"
             required
             value={watch("imageUrl")}
-            onChange={(url) => setValue("imageUrl", url)}
+            error={Boolean(errors.imageUrl)}
+            onChange={(url) => setValue("imageUrl", url, { shouldValidate: true })}
             acceptText="Upload Header Image"
           />
+          {errors.imageUrl && (
+            <p className="text-xs text-destructive font-medium -mt-3">
+              {errors.imageUrl.message}
+            </p>
+          )}
           <div className="space-y-1.5">
             <label className="text-xs font-bold">
               Author <span className="text-destructive">*</span>
@@ -366,8 +378,14 @@ export function BlogForm() {
             <Input
               {...register("author")}
               placeholder="Enter author name"
+              aria-invalid={Boolean(errors.author)}
               className="h-10 text-xs"
             />
+            {errors.author && (
+              <p className="text-xs text-destructive font-medium">
+                {errors.author.message}
+              </p>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
@@ -377,6 +395,7 @@ export function BlogForm() {
               <SearchableSelect
                 options={categoryOptions}
                 value={watch("categoryId")}
+                error={Boolean(errors.categoryId)}
                 onChange={(value) =>
                   setValue("categoryId", value, { shouldValidate: true })
                 }
@@ -415,10 +434,11 @@ export function BlogForm() {
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-bold">Published At</label>
-            <Input
-              {...register("publishedAt")}
-              type="datetime-local"
-              className="h-10 text-xs"
+            <DatePicker
+              value={watch("publishedAt")}
+              onChange={(val) => setValue("publishedAt", val)}
+              showTime
+              placeholder="Select date and time..."
             />
           </div>
         </aside>

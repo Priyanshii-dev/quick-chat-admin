@@ -10,6 +10,7 @@ export interface ImageUploadDropzoneProps {
   onChange?: (url: string) => void;
   acceptText?: string;
   className?: string;
+  error?: boolean;
 }
 
 export function ImageUploadDropzone({
@@ -19,6 +20,7 @@ export function ImageUploadDropzone({
   onChange,
   acceptText = "Upload Image (JPG, PNG)",
   className = "",
+  error = false,
 }: ImageUploadDropzoneProps) {
   const [preview, setPreview] = useState<string | undefined>(value);
 
@@ -49,7 +51,11 @@ export function ImageUploadDropzone({
       </label>
 
       {preview ? (
-        <div className="relative rounded-xl border border-border bg-background p-2 group overflow-hidden">
+        <div
+          className={`relative rounded-xl border bg-background p-2 group overflow-hidden ${
+            error ? "border-[#ef4444]!" : "border-border"
+          }`}
+        >
           <img
             src={preview}
             alt="Upload preview"
@@ -65,7 +71,13 @@ export function ImageUploadDropzone({
           </button>
         </div>
       ) : (
-        <label className="flex h-36 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted/20 px-4 py-6 text-center hover:border-primary hover:bg-primary/5 transition-all">
+        <label
+          className={`flex h-36 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed bg-muted/20 px-4 py-6 text-center transition-all ${
+            error
+              ? "border-[#ef4444]!"
+              : "border-border hover:border-primary hover:bg-primary/5"
+          }`}
+        >
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary mb-2">
             <UploadCloud className="h-5 w-5" />
           </div>

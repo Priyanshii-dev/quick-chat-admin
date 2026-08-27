@@ -189,6 +189,7 @@ export function CategoryTable() {
                 <Input
                   {...register("name")}
                   placeholder="e.g. Artificial Intelligence"
+                  aria-invalid={Boolean(errors.name)}
                   onChange={(e) => {
                     register("name").onChange(e);
                     const slug = e.target.value
@@ -197,10 +198,10 @@ export function CategoryTable() {
                       .replace(/[\s_-]+/g, "-");
                     setValue("slug", slug, { shouldValidate: true });
                   }}
-                  className="bg-background text-xs h-10 rounded-md border-border"
+                  className="bg-background text-xs h-10 rounded-md"
                 />
                 {errors.name && (
-                  <p className="text-xs text-destructive">
+                  <p className="text-xs text-destructive font-medium">
                     {errors.name.message}
                   </p>
                 )}
@@ -228,10 +229,11 @@ export function CategoryTable() {
                 <Input
                   {...register("slug")}
                   placeholder="e.g. artificial-intelligence"
-                  className="bg-background font-mono text-xs h-10 rounded-md border-border"
+                  aria-invalid={Boolean(errors.slug)}
+                  className="bg-background font-mono text-xs h-10 rounded-md"
                 />
                 {errors.slug && (
-                  <p className="text-xs text-destructive">
+                  <p className="text-xs text-destructive font-medium">
                     {errors.slug.message}
                   </p>
                 )}
